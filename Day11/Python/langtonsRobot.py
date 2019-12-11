@@ -68,32 +68,26 @@ class IntComp():
 
 with open ("input.txt","r") as file:
     code = [int(i) for i in file.read().split(",")]
-code += [0] * 9999999
+code += [0] * 999
 
 comp = IntComp(code)
-
-grid = [[0 for i in range(1000)] for j in range(1000)]
-
-
-x = y = 500
+grid = [[0 for i in range(100)] for j in range(100)]
+x = y = 50
 heading = 0
 visited = set()
+dirX = [0,1,0,-1]
+dirY = [1,0,-1,0]
 
 colour, direction = comp.run([grid[y][x]]), comp.run()
 while colour != None:
     grid[y][x] = colour
     visited.add((x,y))
+
     direction = (direction * 2) -1 
     heading = (heading + direction)%4
-    if heading == 0:
-        y += 1
-    elif heading == 1:
-        x += 1
-    elif heading == 2:
-        y -= 1
-    else:
-        x -= 1
+    x += dirX[heading]
+    y += dirY[heading]
+    
     colour, direction = comp.run([grid[y][x]]), comp.run()
-
 
 print(len(visited))

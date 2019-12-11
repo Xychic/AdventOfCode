@@ -68,43 +68,36 @@ class IntComp():
 
 with open ("input.txt","r") as file:
     code = [int(i) for i in file.read().split(",")]
-code += [0] * 9999999
+code += [0] * 999
 
 comp = IntComp(code)
-
-grid = [[0 for i in range(1000)] for j in range(1000)]
-
-
-x = y = 500
+grid = [[0 for i in range(100)] for j in range(100)]
+x = y = 50
 heading = 0
 visited = set()
 maxX = maxY = float("-INF")
 minX = minY = float("INF")
+
+dirX = [0,1,0,-1]
+dirY = [1,0,-1,0]
 
 colour, direction = comp.run([1]), comp.run()
 while colour != None:
     grid[y][x] = colour
     visited.add((x,y))
     
-    maxX = max(maxX, x)
-    minX = min(minX, x)
-    maxY = max(maxY, y)
-    minY = min(minY, y)
+    maxX, minX = max(maxX, x), min(minX, x)
+    maxY, minY = max(maxY, y), min(minY, y)
 
     direction = (direction * 2) -1 
     heading = (heading + direction)%4
-    if heading == 0:
-        y += 1
-    elif heading == 1:
-        x += 1
-    elif heading == 2:
-        y -= 1
-    else:
-        x -= 1
+    x += dirX[heading]
+    y += dirY[heading]
+    
     colour, direction = comp.run([grid[y][x]]), comp.run()
 
 
-for y in range(maxY+1, minY-1,-1):
+for y in range(maxY, minY-1,-1):
     for x in range(minX+1, maxX+1):
         if grid[y][x] == 1:
             print("#",end="")
