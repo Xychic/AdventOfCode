@@ -32,6 +32,7 @@ def visibleKeys(curX, curY, keys):
     seen = set()
     dx = [0, 1, 0, -1]
     dy = [-1, 0, 1, 0]
+    states = []
     while len(queue) > 0:
         x, y, dist = queue.pop(0)
         if grid[y][x] == "#" or (grid[y][x].isupper() and not grid[y][x].lower() in keys):
@@ -41,10 +42,11 @@ def visibleKeys(curX, curY, keys):
         else:
             seen.add((x, y))
         if grid[y][x] in alphabet and grid[y][x] not in keys:
-            yield dist, x, y, grid[y][x]
+            states.append((dist, x, y, grid[y][x]))
             continue
         for i in range(4):
             queue.append((x + dx[i], y + dy[i], dist + 1))
+    return states
 
 
 queue = [(0, pos, frozenset())]
