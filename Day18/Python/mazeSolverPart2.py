@@ -6,6 +6,7 @@ for line in open("input.txt"):
     grid.append(list(line.strip()))
 
 alphabet = [chr(i) for i in range(ord("a"), ord("z")+1)]
+ALPHABET = [chr(i) for i in range(ord("A"), ord("Z")+1)]
 totalKeys = set()
 
 for y in range(len(grid)):
@@ -35,7 +36,7 @@ def visibleKeys(curX, curY, keys):
     states = []
     while len(queue) > 0:
         x, y, dist = queue.pop(0)
-        if grid[y][x] == "#" or (grid[y][x].isupper() and not grid[y][x].lower() in keys):
+        if grid[y][x] == "#" or (grid[y][x] in ALPHABET and not grid[y][x].lower() in keys):
             continue
         if (x, y) in seen:
             continue
