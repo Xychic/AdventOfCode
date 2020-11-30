@@ -1,4 +1,4 @@
-import argparse, sys, os, requests, pickle, saveCookie
+import argparse, sys, os, requests, pickle
 from datetime import datetime
 from collections import defaultdict
 from bs4 import BeautifulSoup
