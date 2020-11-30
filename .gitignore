@@ -1,3 +1,4 @@
 cookies
 *.tmp
 __pycache__
+*.class

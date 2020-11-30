@@ -15,6 +15,11 @@ parser.add_argument("-d", "--day", default=CURRENT_DAY, help="The day of advent 
 parser.add_argument("-l", "--language", default="Python", help="The programming language to create the template file for. (Default is .py)")
 args = parser.parse_args()
 
+# Get the title of the days challenge
+response = requests.get(f"https://adventofcode.com/{args.year}/day/{args.day}")
+soup = BeautifulSoup(response.text, "html.parser")
+title = str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "_")    # Horrible I know
+
 # Create the dictionary of langugae extensions (CBA to add any more atm)
 EXTENSION_DICT = defaultdict(str)
 EXTENSION_DICT["Python"] = ".py"
@@ -29,6 +34,54 @@ TEMPLATE_DICT["Python"] = """import sys, collections
 
 for line in open(f"{sys.path[0]}/../input.txt").read().splitlines():
     print(line)
+"""
+TEMPLATE_DICT["Java"] = f"""import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+class {title} {{
+
+    public static void main(String[] args) {{
+        BufferedReader reader;
+        try {{
+            reader = new BufferedReader(new FileReader("{CURRENT_PATH}/{args.year}/Day{args.day}/input.txt"));
+            String line = reader.readLine();
+			while (line != null) {{
+				System.out.println(line);
+				line = reader.readLine();
+			}}
+			reader.close();
+        }} catch (IOException e) {{
+			e.printStackTrace();
+		}}
+    }}
+}}
+"""
+TEMPLATE_DICT["C"] = f"""#include <stdio.h>
+#include <stdlib.h>
+
+int main(void) {{
+    FILE *fp;
+    char *line = NULL;
+    size_t len = 0;
+    size_t read;
+
+    fp = fopen("{CURRENT_PATH}/{args.year}/Day{args.day}/input.txt", "r");
+    if (fp == NULL) {{
+        exit(EXIT_FAILURE);
+    }}
+
+    while ((read = getline(&line, &len, fp)) != -1) {{
+        printf("%s", line);
+    }}
+
+    fclose(fp);
+    if (line) {{
+        free(line);
+    }}
+    exit(EXIT_SUCCESS);
+}}
+
 """
 
 # Create the full path for the day
@@ -47,10 +100,5 @@ else:
 dayInput = requests.get(f"https://adventofcode.com/{args.year}/day/{args.day}/input", cookies=cookies)
 open(f"{CURRENT_PATH}/{args.year}/Day{args.day}/input.txt", "wb").write(dayInput.content)
 
-# Get the title of the days challenge
-response = requests.get(f"https://adventofcode.com/{args.year}/day/{args.day}")
-soup = BeautifulSoup(response.text, "html.parser")
-title = str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "_") + EXTENSION_DICT[args.language]    # Horrible I know
-
 # Write the file template
-open(f"{CURRENT_PATH}/{args.year}/Day{args.day}/{args.language}/{title}", "w").write(TEMPLATE_DICT[args.language])
+open(f"{CURRENT_PATH}/{args.year}/Day{args.day}/{args.language}/{title + EXTENSION_DICT[args.language]}", "w").write(TEMPLATE_DICT[args.language])
