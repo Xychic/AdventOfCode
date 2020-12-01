@@ -1,4 +1,9 @@
-import argparse, sys, os, requests, pickle
+import argparse
+import sys
+import os
+import requests
+import pickle
+import webbrowser
 from datetime import datetime
 from collections import defaultdict
 from bs4 import BeautifulSoup
@@ -16,9 +21,11 @@ parser.add_argument("-l", "--language", default="Python", help="The programming 
 args = parser.parse_args()
 
 # Get the title of the days challenge
-response = requests.get(f"https://adventofcode.com/{args.year}/day/{args.day}")
+url = f"https://adventofcode.com/{args.year}/day/{args.day}"
+response = requests.get(url)
 soup = BeautifulSoup(response.text, "html.parser")
 title = str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "")    # Horrible I know
+webbrowser.open_new(url)
 
 # Create the dictionary of langugae extensions (CBA to add any more atm)
 EXTENSION_DICT = defaultdict(str)
