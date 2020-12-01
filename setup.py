@@ -40,6 +40,7 @@ TEMPLATE_DICT = defaultdict(str)
 TEMPLATE_DICT["Python"] = """import sys
 import collections
 import itertools
+import numpy as np
 
 for line in open(f"{sys.path[0]}/../input.txt").read().splitlines():
     print(line)
