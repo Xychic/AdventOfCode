@@ -53,7 +53,7 @@ class {title} {{
     public static void main(String[] args) {{
         BufferedReader reader;
         try {{
-            reader = new BufferedReader(new FileReader("{CURRENT_PATH}/{args.year}/Day{args.day}/input.txt"));
+            reader = new BufferedReader(new FileReader("../input.txt"));
             String line = reader.readLine();
 			while (line != null) {{
 				System.out.println(line);
@@ -75,7 +75,7 @@ int main(void) {{
     size_t len = 0;
     size_t read;
 
-    fp = fopen("{CURRENT_PATH}/{args.year}/Day{args.day}/input.txt", "r");
+    fp = fopen("../input.txt", "r");
     if (fp == NULL) {{
         exit(EXIT_FAILURE);
     }}
@@ -90,7 +90,27 @@ int main(void) {{
     }}
     exit(EXIT_SUCCESS);
 }}
+"""
+TEMPLATE_DICT["Haskell"] = """import System.IO
+import Control.Monad
 
+printArray:: (Show a, Eq a) => [a] -> String
+printArray (x:xs)
+    | xs == [] = show x
+    | otherwise = (show x) ++ "\n" ++ printArray xs
+
+subsets:: Int -> [a] -> [[a]]
+subsets 0 _ = [[]]
+subsets _ [] = []
+subsets n (x : xs) = map (x :) (subsets (n - 1) xs) ++ subsets n xs
+
+main:: IO()
+main = do
+    handle <- openFile "../input.txt" ReadMode
+    contents <- hGetContents handle
+    let lines = (words contents)
+
+    hClose handle
 """
 
 # Create the full path for the day
