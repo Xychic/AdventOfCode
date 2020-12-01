@@ -18,7 +18,7 @@ args = parser.parse_args()
 # Get the title of the days challenge
 response = requests.get(f"https://adventofcode.com/{args.year}/day/{args.day}")
 soup = BeautifulSoup(response.text, "html.parser")
-title = str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "_")    # Horrible I know
+title = str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "")    # Horrible I know
 
 # Create the dictionary of langugae extensions (CBA to add any more atm)
 EXTENSION_DICT = defaultdict(str)
@@ -30,7 +30,9 @@ EXTENSION_DICT["Haskell"] = ".hs"
 
 # I will probably update this if I decide I want to use any other language
 TEMPLATE_DICT = defaultdict(str)
-TEMPLATE_DICT["Python"] = """import sys, collections
+TEMPLATE_DICT["Python"] = """import sys
+import collections
+import itertools
 
 for line in open(f"{sys.path[0]}/../input.txt").read().splitlines():
     print(line)
@@ -100,5 +102,8 @@ else:
 dayInput = requests.get(f"https://adventofcode.com/{args.year}/day/{args.day}/input", cookies=cookies)
 open(f"{CURRENT_PATH}/{args.year}/Day{args.day}/input.txt", "wb").write(dayInput.content)
 
+dirPath = f"{CURRENT_PATH}/{args.year}/Day{args.day}/{args.language}"
 # Write the file template
-open(f"{CURRENT_PATH}/{args.year}/Day{args.day}/{args.language}/{title + EXTENSION_DICT[args.language]}", "w").write(TEMPLATE_DICT[args.language])
+if not os.listdir(dirPath):
+    for i in range(2):
+        open(f"{dirPath}/{title}-Part{i+1}{EXTENSION_DICT[args.language]}", "w").write(TEMPLATE_DICT[args.language])
