@@ -109,7 +109,7 @@ main:: IO()
 main = do
     handle <- openFile "../input.txt" ReadMode
     contents <- hGetContents handle
-    let lines = (words contents)
+    let row = (lines contents)
 
     hClose handle
 """
