@@ -26,9 +26,9 @@ replaceAll:: (Eq a) => [a] -> [(a, a)] -> [a]
 replaceAll toReplace [] = toReplace
 replaceAll toReplace ((a,b):xs) = replaceAll (replace toReplace a b) xs
 
-bin2Dec :: [Char] -> Integer
-bin2Dec = foldr (\c s -> s * 2 + c) 0 . reverse . map c2i
-    where c2i c = if c == '0' then 0 else 1
+binToDec :: [Char] -> Integer
+binToDec binString = foldr (\c s -> s * 2 + c) 0 (reverse (map charToInt binString))
+    where charToInt c = if c == '0' then 0 else 1
 
 replacements:: [(Char, Char)]
 replacements = [('F', '0'), ('B', '1'), ('L', '0'), ('R', '1')]
@@ -38,5 +38,5 @@ main = do
     handle <- openFile "../input.txt" ReadMode
     contents <- hGetContents handle
     let rows = lines contents
-    print (maximum (map (\row -> bin2Dec (replaceAll row replacements)) rows))
+    print (maximum (map (\row -> binToDec (replaceAll row replacements)) rows))
     hClose handle
