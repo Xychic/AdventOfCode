@@ -18,8 +18,8 @@ split d s = x : split d (drop 1 y) where (x,y) = span (/= d) s
 replace:: (Eq a) => [a] -> a -> a -> [a]
 replace [] _ _ = []
 replace (x:xs) a b 
-    | x == a = [b] ++ replace xs a b
-    | otherwise = [x] ++ replace xs a b
+    | x == a = b : replace xs a b
+    | otherwise = x : replace xs a b
 
 parseData:: [[Char]] -> (Int, Int, Char, [Char])
 parseData (a:b:c:d:as) = ((read a::Int), (read b::Int), (c!!0), d)
