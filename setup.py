@@ -18,6 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-y", "--year", default=CURRENT_YEAR, help="The year of advent of code you want to setup for. (Default is current year)")
 parser.add_argument("-d", "--day", default=CURRENT_DAY, help="The day of advent of code you want to setup for. (Default is current day)")
 parser.add_argument("-l", "--language", default="Python", help="The programming language to create the template file for. (Default is .py)")
+parser.add_argument("-N", "--NoLink", action="store_false", help="Prevents opening link to current day.")
 args = parser.parse_args()
 
 # Get the title of the days challenge
@@ -25,7 +26,8 @@ url = f"https://adventofcode.com/{args.year}/day/{args.day}"
 response = requests.get(url)
 soup = BeautifulSoup(response.text, "html.parser")
 title = str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "")    # Horrible I know
-webbrowser.open_new(url)
+if args.NoLink:
+    webbrowser.open_new(url)
 
 # Create the dictionary of langugae extensions (CBA to add any more atm)
 EXTENSION_DICT = defaultdict(str)
@@ -97,19 +99,30 @@ import Control.Monad
 
 printArray:: (Show a, Eq a) => [a] -> String
 printArray (x:xs)
-    | xs == [] = show x
-    | otherwise = (show x) ++ "\\n" ++ printArray xs
+    | null xs = show x
+    | otherwise = show x ++ "\\n" ++ printArray xs
 
 subsets:: Int -> [a] -> [[a]]
 subsets 0 _ = [[]]
 subsets _ [] = []
 subsets n (x : xs) = map (x :) (subsets (n - 1) xs) ++ subsets n xs
 
+split:: Eq a => a -> [a] -> [[a]]
+split onChar [] = []
+split onChar toSplit = x : split onChar (drop 1 y) 
+    where (x,y) = span (/= onChar) toSplit
+
+replace:: (Eq a) => [a] -> a -> a -> [a]
+replace [] _ _ = []
+replace (x:xs) a b 
+    | x == a = b : replace xs a b
+    | otherwise = x : replace xs a b
+
 main:: IO()
 main = do
     handle <- openFile "../input.txt" ReadMode
     contents <- hGetContents handle
-    let row = (lines contents)
+    let rows = lines contents
 
     hClose handle
 """
