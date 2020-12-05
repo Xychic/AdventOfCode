@@ -22,7 +22,7 @@ replace (x:xs) a b
     | otherwise = x : replace xs a b
 
 parseData:: [[Char]] -> (Int, Int, Char, [Char])
-parseData (a:b:c:d:as) = ((read a::Int), (read b::Int), (c!!0), d)
+parseData (a:b:c:d:as) = (read a::Int, read b::Int, head c, d)
 
 checkValid:: (Int, Int, Char, [Char]) -> Bool
 checkValid (a, b, c, d) = let l = length (filter (== c) d) in
@@ -31,8 +31,8 @@ checkValid (a, b, c, d) = let l = length (filter (== c) d) in
 main:: IO()
 main = do
     handle <- openFile "../input.txt" ReadMode
-    contents <- (hGetContents handle)
-    let splitLines = map (words) (lines ((replace (filter (\n -> n /= ':') contents ) '-' ' ')))
-    print (length (filter (checkValid) (map (parseData) splitLines)))
+    contents <- hGetContents handle
+    let splitLines = map words (lines (replace (filter (/= ':') contents ) '-' ' '))
+    print (length (filter checkValid (map parseData splitLines)))
 
     hClose handle
