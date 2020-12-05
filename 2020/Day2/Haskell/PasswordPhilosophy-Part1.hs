@@ -3,8 +3,8 @@ import Control.Monad
 
 printArray:: (Show a, Eq a) => [a] -> String
 printArray (x:xs)
-    | xs == [] = show x
-    | otherwise = (show x) ++ "\n" ++ printArray xs
+    | null xs = show x
+    | otherwise = show x ++ "\n" ++ printArray xs
 
 subsets:: Int -> [a] -> [[a]]
 subsets 0 _ = [[]]
