@@ -9,7 +9,7 @@ groups = []
 
 for line in open(f"{sys.path[0]}/../input.txt").read().splitlines():
     if len(line):
-        questions = questions & set(line)
+        questions &= set(line)
     else:
         groups.append(questions)
         questions = set(string.ascii_lowercase)
