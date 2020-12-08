@@ -6,13 +6,8 @@ import qualified Data.Text as Text
 
 printArray:: (Show a, Eq a) => [a] -> String
 printArray (x:xs)
-    | xs == [] = show x
-    | otherwise = (show x) ++ "\n" ++ printArray xs
-
-subsets:: Int -> [a] -> [[a]]
-subsets 0 _ = [[]]
-subsets _ [] = []
-subsets n (x : xs) = map (x :) (subsets (n - 1) xs) ++ subsets n xs
+    | null xs = show x
+    | otherwise = show x ++ "\n" ++ printArray xs
 
 split:: Eq a => a -> [a] -> [[a]]
 split onChar [] = []

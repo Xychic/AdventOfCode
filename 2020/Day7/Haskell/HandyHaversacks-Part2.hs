@@ -8,16 +8,6 @@ printArray (x:xs)
     | null xs = show x
     | otherwise = show x ++ "\n" ++ printArray xs
 
-subsets:: Int -> [a] -> [[a]]
-subsets 0 _ = [[]]
-subsets _ [] = []
-subsets n (x : xs) = map (x :) (subsets (n - 1) xs) ++ subsets n xs
-
-split:: Eq a => a -> [a] -> [[a]]
-split onChar [] = []
-split onChar toSplit = x : split onChar (drop 1 y) 
-    where (x,y) = span (/= onChar) toSplit
-
 splitStr :: Eq a => [a] -> [a] -> [[a]]
 splitStr sub str = split' sub str [] []
     where
@@ -25,12 +15,6 @@ splitStr sub str = split' sub str [] []
     split' sub str subacc acc
         | sub `isPrefixOf` str = split' sub (drop (length sub) str) [] (reverse subacc:acc)
         | otherwise = split' sub (tail str) (head str:subacc) acc
-
-replace:: (Eq a) => [a] -> a -> a -> [a]
-replace [] _ _ = []
-replace (x:xs) a b 
-    | x == a = b : replace xs a b
-    | otherwise = x : replace xs a b
 
 replaceStr:: (Eq a) => [a] -> [a] -> [a] -> [a]
 replaceStr toReplace target sub = replaceStr' (splitStr target toReplace) sub
@@ -58,7 +42,7 @@ getData ((a,b):xs) target
 
 getTotalBags:: [BagData] -> [Char] -> Int
 getTotalBags bagData bagName
-    | subBags == [] = 1
+    | null subBags = 1
     | otherwise = 1 + sum (map (\(a,b) -> a * getTotalBags bagData b) subBags)
     where
         subBags = getData bagData bagName
