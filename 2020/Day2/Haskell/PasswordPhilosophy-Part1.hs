@@ -6,15 +6,6 @@ printArray (x:xs)
     | null xs = show x
     | otherwise = show x ++ "\n" ++ printArray xs
 
-subsets:: Int -> [a] -> [[a]]
-subsets 0 _ = [[]]
-subsets _ [] = []
-subsets n (x : xs) = map (x :) (subsets (n - 1) xs) ++ subsets n xs
-
-split:: Eq a => a -> [a] -> [[a]]
-split d [] = []
-split d s = x : split d (drop 1 y) where (x,y) = span (/= d) s
-
 replace:: (Eq a) => [a] -> a -> a -> [a]
 replace [] _ _ = []
 replace (x:xs) a b 
