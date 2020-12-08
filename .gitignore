@@ -1,5 +1,5 @@
 cookies
-*.tmp
+*tmp*
 __pycache__
 *.class
 tempCodeRunnerFile*
