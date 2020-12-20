@@ -220,12 +220,12 @@ def getNextPiece(side, d):
 
 t = np.array([[x + y for x in "abcd"] for y in "1234"])
 
-
 for _ in range(pathLen):
     tiles.remove(current)
     dy, dx = dirs[dirIndex]
     y, x = y+dy, x+dx
     # showWorld()
+    # input()
     nextPiece = getNextPiece(current.getSide(dirIndex)[::-1], dirIndex)
     world[y][x] = nextPiece.tile
     current = nextPiece
@@ -238,6 +238,7 @@ while pathLen > 0:
             dy, dx = dirs[dirIndex]
             y, x = y+dy, x+dx
             # showWorld()
+            # input()
             nextPiece = getNextPiece(current.getSide(dirIndex)[::-1], dirIndex)
             world[y][x] = nextPiece.tile
             current = nextPiece
@@ -272,7 +273,7 @@ def markMonsters(flattenedWorld):
             if all([flattenedWorld[y+dy][x+dx] == "#" for dy,dx in shape]):
                 monsters += 1
                 for dy, dx in shape:
-                    flattenedWorld[y+dy][x+dx] = "O "
+                    flattenedWorld[y+dy][x+dx] = "O"
                 x += 20
             else:
                 x += 1
@@ -289,6 +290,8 @@ for _ in range(2):
         flattenedWorld = [row[::-1] for row in flattenedWorld]
 
 for row in flattenedWorld:
-    print("".join(row))
+    for col in row[::-1]:
+        print("\x1b[33;38;5;46m" + "O" + "\x1b[0m" if col == "O" else col,end="")
+    print()
 
 print(sum("".join(row).count('#') for row in flattenedWorld))
