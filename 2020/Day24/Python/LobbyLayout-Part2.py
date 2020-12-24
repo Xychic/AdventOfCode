@@ -23,7 +23,7 @@ nenewswnwewswnenesenwnesewesw
 eneswnwswnwsenenwnwnwwseeswneewsenese
 neswnwewnwnwseenwseesewsenwsweewe
 wseweeenwnesenwwwswnew"""
-# inp = open(f"{sys.path[0]}/../input.txt").read()
+inp = open(f"{sys.path[0]}/../input.txt").read()
 
 def getPath(line):
     path = []
@@ -62,26 +62,19 @@ for line in inp.splitlines():
     maxZ = max(maxZ, z)
     tiles[(x,y,z)] = not tiles[(x,y,z)]
 
-# print((minX, maxX), (minY, maxY), (minZ, maxZ))
 for day in range(100):
-    nextTiles = tiles.copy()
-    for x in range(minX-1, maxX+2):
-        for y in range(minY-1, maxY+2):
-            for z in range(minZ-1, maxZ+1):
-                nextTo = sum([tiles[(x+dx, y+dy, z+dz)] for dx, dy, dz in deltaDict.values()])
-                if tiles[(x,y,z)]:
-                    if nextTo == 0:
-                        nextTiles[(x,y,z)] = False
-                    elif nextTo > 2:
-                        nextTiles[(x,y,z)] = False
-                elif not tiles[(x,y,z)] and (nextTo == 2):
-                    nextTiles[(x,y,z)] = True
-    tiles = nextTiles.copy()
-    for x,y,z in tiles.keys():
-        minX = min(minX, x-1)
-        maxX = max(maxX, x+1)
-        minY = min(minY, y-1)
-        maxY = max(maxY, y+1)
-        minZ = min(minZ, z-1)
-        maxZ = max(maxZ, z+1)
+    newTiles = collections.defaultdict(bool)
+    toCheck = []
+    for (x, y, z) in tiles:
+        if tiles[(x,y,z)]:
+            toCheck.append((x,y,z))
+            for dx, dy, dz in deltaDict.values():
+                toCheck.append((x+dx, y+dy, z+dz))
+    for (x, y, z) in toCheck:
+        nextTo = sum([tiles[(x+dx, y+dy, z+dz)] for dx, dy, dz in deltaDict.values()])
+        if tiles[(x,y,z)] and not (nextTo == 0 or nextTo > 2):
+            newTiles[(x,y,z)] = True
+        if not tiles[(x,y,z)] and nextTo == 2:
+            newTiles[(x,y,z)] = True
+    tiles = newTiles
     print(f"Day {day+1}: {sum(tiles.values())}")
