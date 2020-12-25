@@ -128,7 +128,7 @@ main = do
 """
 
 # Create the full path for the day
-try:    os.makedirs(f"{CURRENT_PATH}/{args.year}/Day{args.day}/{args.language}")
+try:    os.makedirs(f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}")
 except FileExistsError: pass
 
 # If there is a cookies file load it, if not ask for the cookie
@@ -140,10 +140,10 @@ else:
     pickle.dump(cookies, open(f"{sys.path[0]}/cookies", "wb"))
 
 # Get the days input file
-dayInput = requests.get(f"https://adventofcode.com/{args.year}/day/{args.day}/input", cookies=cookies)
-open(f"{CURRENT_PATH}/{args.year}/Day{args.day}/input.txt", "wb").write(dayInput.content)
+dayInput = requests.get(f"https://adventofcode.com/{args.year}/day/{int(args.day):02d}/input", cookies=cookies)
+open(f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/input.txt", "wb").write(dayInput.content)
 
-dirPath = f"{CURRENT_PATH}/{args.year}/Day{args.day}/{args.language}"
+dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}"
 # Write the file template
 if not os.listdir(dirPath):
     for i in range(2):
