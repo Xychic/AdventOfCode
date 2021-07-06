@@ -4,6 +4,7 @@ import os
 import requests
 import pickle
 import webbrowser
+from subprocess import call
 from datetime import datetime
 from collections import defaultdict
 from bs4 import BeautifulSoup
@@ -25,7 +26,8 @@ args = parser.parse_args()
 url = f"https://adventofcode.com/{args.year}/day/{args.day}"
 response = requests.get(url)
 soup = BeautifulSoup(response.text, "html.parser")
-title = str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "")    # Horrible I know
+title = str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "_")    # Horrible I know
+title = "".join([c for c in title if c.isalpha() or c.isdigit() or c == "_"]).rstrip()
 if args.NoLink:
     webbrowser.open_new(url)
 
@@ -40,18 +42,23 @@ EXTENSION_DICT["Haskell"] = ".hs"
 # I will probably update this if I decide I want to use any other language
 TEMPLATE_DICT = defaultdict(str)
 TEMPLATE_DICT["Python"] = """import sys
+import time
 import collections
 import itertools
 import numpy as np
 
+startTime = time.time()
+
 for line in open(f"{sys.path[0]}/../input.txt").read().splitlines():
     print(line)
+
+print(f"completed in {time.time() - startTime} seconds")
 """
 TEMPLATE_DICT["Java"] = f"""import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-class {title} {{
+class {title.replace('_','')} {{
 
     public static void main(String[] args) {{
         BufferedReader reader;
@@ -127,6 +134,25 @@ main = do
     hClose handle
 """
 
+TEMPLATE_DICT["Rust"] = """use std::fs;
+
+fn main() {
+    let input: String = fs::read_to_string("../../../input.txt").expect("error reading file");
+    let lines: Vec<&str> = input.trim().split("\\n").collect();
+
+    println!("Part 1: {}", part_1(lines.clone()));
+    println!("Part 2: {}", part_2(lines.clone()));
+}
+
+fn part_1(lines: Vec<&str>) -> usize {
+    0
+}
+
+fn part_2(lines: Vec<&str>) -> usize {
+    0
+}
+"""
+
 # Create the full path for the day
 try:    os.makedirs(f"{CURRENT_PATH}/{args.year}/Day{args.day}/{args.language}")
 except FileExistsError: pass
@@ -146,5 +172,9 @@ open(f"{CURRENT_PATH}/{args.year}/Day{args.day}/input.txt", "wb").write(dayInput
 dirPath = f"{CURRENT_PATH}/{args.year}/Day{args.day}/{args.language}"
 # Write the file template
 if not os.listdir(dirPath):
-    for i in range(2):
-        open(f"{dirPath}/{title}-Part{i+1}{EXTENSION_DICT[args.language]}", "w").write(TEMPLATE_DICT[args.language])
+    if args.language == "Rust":
+        call(f"cargo new {title.lower()}", cwd=dirPath, shell=True)
+        open(f"{dirPath}/{title.lower()}/src/main.rs", "w").write(TEMPLATE_DICT["Rust"])
+    else:
+        for i in range(2):
+            open(f"{dirPath}/{title.replace('_','')}-Part{i+1}{EXTENSION_DICT[args.language]}", "w").write(TEMPLATE_DICT[args.language])
