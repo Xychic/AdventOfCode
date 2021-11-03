@@ -9,7 +9,9 @@ use std::collections::{HashMap, BinaryHeap};
 
 type Node = (usize, usize);
 
-struct DefaultMap<'a, A: Eq + Hash + Copy, B: Copy> {
+struct DefaultMap<'a, A, B>
+where A: Eq + Hash + Copy,
+B : Copy {
     data: HashMap<A, B>,
     default: &'a dyn Fn(A) -> B
 }
@@ -109,7 +111,33 @@ fn part_1(num: usize) -> usize {
 }
 
 fn part_2(num: usize) -> usize {
-    0
+    let walls_func = |(a, b)| is_wall(a, b, num);
+    let mut walls: DefaultMap<Node, bool> = DefaultMap::new(&walls_func);
+    
+    let distance_func = |_| usize::MAX;
+    let mut distances: DefaultMap<Node, usize> = DefaultMap::new(&distance_func);
+    let mut heap: BinaryHeap<State> = BinaryHeap::new();
+    let mut path: HashMap<Node, Node> = HashMap::new();
+    
+    let start: Node = (1, 1);
+
+    distances.set(start, 0);
+    heap.push(State {cost: 0, position: start});
+
+    while let Some(State {cost, position}) = heap.pop() {
+        if &cost > distances.get(position) { continue; }
+
+        for edge in get_neighbours(&mut walls, position) {
+            let next = State{cost: cost + 1, position: edge};
+
+            if &next.cost < distances.get(edge) {
+                path.insert(next.position, position);
+                heap.push(next);
+                distances.set(next.position, next.cost)
+            }
+        }
+    }
+    distances.data.into_iter().filter(|&(_, v)| v <= 50).count()
 }
 
 fn is_wall(x: usize, y: usize, num: usize) -> bool {
