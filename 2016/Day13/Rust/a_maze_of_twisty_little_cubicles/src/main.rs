@@ -57,7 +57,6 @@ impl PartialOrd for State {
 fn main() {
     let input: String = fs::read_to_string("../../../input.txt").expect("error reading file");
     let num: usize = input.trim().parse::<usize>().unwrap();
-    // let num = 10;
     println!("{}", num);
     
     println!("Part 1: {}", part_1(num));
@@ -74,7 +73,7 @@ fn part_1(num: usize) -> usize {
     let mut path: HashMap<Node, Node> = HashMap::new();
     
     let start: Node = (1, 1);
-    let end: Node = (7, 4);
+    let end: Node = (31, 39);
 
     distances.set(start, 0);
     heap.push(State {cost: 0, position: start});
@@ -82,15 +81,15 @@ fn part_1(num: usize) -> usize {
     while let Some(State {cost, position}) = heap.pop() {
         // // Alternatively we could have continued to find all shortest paths
         if position == end { 
-            let mut path_to_end: Vec<Node> = Vec::new();
-            let mut p: Node = *path.get(&end).unwrap();
-            path_to_end.push(p);
-            while p != start {
-                p = *path.get(&p).unwrap();
-                path_to_end.push(p);
-            }
-            path_to_end.reverse();
-            println!("{:?}", path_to_end);
+            // let mut path_to_end: Vec<Node> = Vec::new();
+            // let mut p: Node = *path.get(&end).unwrap();
+            // path_to_end.push(p);
+            // while p != start {
+            //     p = *path.get(&p).unwrap();
+            //     path_to_end.push(p);
+            // }
+            // path_to_end.reverse();
+            // draw_board(&mut walls, path_to_end);
             return cost; 
         }
 
@@ -106,7 +105,6 @@ fn part_1(num: usize) -> usize {
             }
         }
     }
-    draw_board(&walls);
     0
 }
 
@@ -142,7 +140,7 @@ fn get_neighbours(walls: &mut DefaultMap<Node, bool>, (x, y): Node) -> Vec<Node>
     neighbours
 }
 
-fn draw_board(walls: &DefaultMap<Node, bool>) {
+fn draw_board(walls: &mut DefaultMap<Node, bool>, path: Vec<Node>) {
     let mut max_x = 0;
     let mut max_y = 0;
 
@@ -151,5 +149,17 @@ fn draw_board(walls: &DefaultMap<Node, bool>) {
         max_y = cmp::max(*y, max_y);
     }
 
-    println!("{} {}", max_x, max_y);
+    for y in 0..max_y+1 {
+        for x in 0..max_x+1 {
+            if path.contains(&(x, y)) {
+                print!("O");
+            } else if ! walls.data.contains_key(&(x, y)) {
+                print!(" ");
+            } else {
+                print!("{}", if *walls.get((x, y)) {'#'} else {'.'})
+            }
+        }
+        println!();
+    }
+
 }
