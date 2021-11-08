@@ -11,13 +11,6 @@ enum Instruction {
 
 fn main() {
     let input = fs::read_to_string("../../../input.txt").expect("error reading file");
-//     let input = "cpy 2 a
-// tgl a
-// tgl a
-// tgl a
-// cpy 1 a
-// dec a
-// dec a";
     let input = parse_input(input.trim());
 
     println!("Part 1: {}", part_1(&input));
@@ -25,30 +18,18 @@ fn main() {
 }
 
 fn part_1(instructions: &Vec<Instruction>) -> isize {
-    let mut instructions = instructions.clone();
-    let mut data: HashMap<String, isize> = HashMap::new();
-    let mut index = 0;
-    data.insert("a".to_string(), 7);
-
-    while index < instructions.len() {
-        let instrcuctions_copy = instructions.clone();
-        let instruction = &instrcuctions_copy[index];
-        match instruction {
-            Instruction::CPY{a, b} => { apply_copy(a, b, &mut data, &mut index); }
-            Instruction::INC{a} => { apply_increment(a, &mut data, &mut index); }
-            Instruction::DEC{a} => { apply_decrement(a, &mut data, &mut index); }
-            Instruction::JNZ{a, b} => { apply_jump_not_zero(a, b, &mut data, &mut index); }
-            Instruction::TGL{a} => { apply_toggle(a, &mut data, &mut index, &mut instructions); }
-        }
-    }
-    *data.get("a").unwrap()
+    run_machine(instructions, 7)
 }
 
 fn part_2(instructions: &Vec<Instruction>) -> isize {
+    run_machine(instructions, 7) + (factorial(12) - factorial(7)) as isize
+}
+
+fn run_machine(instructions: &Vec<Instruction>, starting_val: isize) -> isize {
     let mut instructions = instructions.clone();
     let mut data: HashMap<String, isize> = HashMap::new();
     let mut index = 0;
-    data.insert("a".to_string(), 12);
+    data.insert("a".to_string(), starting_val);
 
     while index < instructions.len() {
         let instrcuctions_copy = instructions.clone();
@@ -131,4 +112,12 @@ fn apply_toggle(a: &str, data: &mut HashMap<String, isize>, index: &mut usize, i
         instructions[target_index] = new_ins;
     }
     *index += 1;
+}
+
+fn factorial(n: usize) -> usize {
+    match n {
+        0 => 1,
+        1 => 1,
+        _ => n * factorial(n-1)
+    }
 }
