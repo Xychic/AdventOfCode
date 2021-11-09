@@ -55,11 +55,16 @@ fn main() {
 fn part_1(targets: &[Node], distances: &HashMap<(Node, Node), usize>) -> usize {
     targets.iter().skip(1).permutations(targets.len()-1).unique().map(|mut perm| {
         perm.insert(0, &targets[0]);
-        let mut cost = 0;
-        for (&a, &b) in perm.iter().zip(perm.iter().skip(1)) {
-            cost += distances.get(&(*a, *b)).unwrap();
-        }
-        cost
+        perm
+            .iter()
+            .zip(
+                perm
+                .iter()
+                .skip(1)
+            )
+            .map(|(&a,&b)| 
+                distances.get(&(*a, *b)).unwrap())
+            .sum()
     })
     .min()
     .unwrap()
@@ -69,11 +74,16 @@ fn part_2(targets: &[Node], distances: &HashMap<(Node, Node), usize>) -> usize {
     targets.iter().skip(1).permutations(targets.len()-1).unique().map(|mut perm| {
         perm.insert(0, &targets[0]);
         perm.push(&targets[0]);
-        let mut cost = 0;
-        for (&&a, &&b) in perm.iter().zip(perm.iter().skip(1)) {
-            cost += distances.get(&(a, b)).unwrap();
-        }
-        cost
+        perm
+            .iter()
+            .zip(
+                perm
+                .iter()
+                .skip(1)
+            )
+            .map(|(&a,&b)| 
+                distances.get(&(*a, *b)).unwrap())
+            .sum()
     })
     .min()
     .unwrap()
