@@ -1,4 +1,5 @@
 use std::{cmp, fs};
+use itertools::Itertools;
 
 #[derive(Debug, Clone, Copy)]
 struct Node {
@@ -39,13 +40,11 @@ fn part_2(input: &[Node]) -> usize {
     let x_size = input.iter().map(|n| n.pos.0).max().unwrap() + 1;
     let y_size = input.iter().map(|n| n.pos.1).max().unwrap() + 1;
     let mut grid = vec![vec![false; x_size]; y_size];
-    let mut space = (0, 0);
+    let (space, max_size) = input.iter().sorted_by(|a, b| a.used.cmp(&b.used)).map(|x| (x.pos, x.size)).next().unwrap();
+
     for n in input {
         let (x, y) = n.pos;
-        if n.used == 0 {
-            space = n.pos;
-        }
-        grid[y][x] = (n.used * 100 / n.size) >= 90;
+        grid[y][x] = n.used > max_size;
     }
     let target = (x_size-1, 0);
 
