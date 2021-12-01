@@ -1,0 +1,6 @@
+[package]
+edition = "2021"
+name = "go_with_the_flow"
+version = "0.1.0"
+[dependencies]
+regex = "*"
