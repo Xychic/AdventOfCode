@@ -27,9 +27,9 @@ fn part_1(input: &Input) -> usize {
 }
 
 fn part_2(input: &Input) -> usize {
-    part_1(
-        &(0..input.len() - 2)
-            .map(|i| input[i..=i + 2].iter().sum())
-            .collect(),
-    )
+    input
+        .iter()
+        .zip(input.iter().skip(3))
+        .filter(|(a, b)| a < b)
+        .count()
 }
