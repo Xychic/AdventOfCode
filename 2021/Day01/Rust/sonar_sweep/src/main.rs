@@ -27,11 +27,9 @@ fn part_1(input: &Input) -> usize {
 }
 
 fn part_2(input: &Input) -> usize {
-    let sum3: Vec<usize> = (0..input.len() - 2)
-        .map(|i| input[i..=i + 2].iter().sum())
-        .collect();
-    sum3.iter()
-        .zip(sum3.iter().skip(1))
-        .filter(|(a, b)| a < b)
-        .count()
+    part_1(
+        &(0..input.len() - 2)
+            .map(|i| input[i..=i + 2].iter().sum())
+            .collect(),
+    )
 }
