@@ -30,7 +30,7 @@ fn main() {
 }
 
 fn part_1(input: &str) -> String {
-    let mut heap = BinaryHeap::new();
+    let mut heap= BinaryHeap::new();
     let start = (0, 0);
     let end = (3, 3);
 
