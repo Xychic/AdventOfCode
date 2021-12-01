@@ -18,7 +18,7 @@ CURRENT_PATH = sys.path[0]
 parser = argparse.ArgumentParser()
 parser.add_argument("-y", "--year", default=CURRENT_YEAR, help="The year of advent of code you want to setup for. (Default is current year)")
 parser.add_argument("-d", "--day", default=CURRENT_DAY, help="The day of advent of code you want to setup for. (Default is current day)")
-parser.add_argument("-l", "--language", default="Python", help="The programming language to create the template file for. (Default is .py)")
+parser.add_argument("-l", "--language", default="Rust", help="The programming language to create the template file for. (Default is .py)")
 parser.add_argument("-N", "--NoLink", action="store_false", help="Prevents opening link to current day.")
 args = parser.parse_args()
 
@@ -136,19 +136,27 @@ main = do
 
 TEMPLATE_DICT["Rust"] = """use std::fs;
 
-fn main() {
-    let input = fs::read_to_string("../../../input.txt").expect("error reading file");
-    let input = input.trim();
+type Input<'a> = Vec<&'a str>;
 
-    println!("Part 1: {}", part_1(input));
-    println!("Part 2: {}", part_2(input));
+fn main() {
+    let raw_input = fs::read_to_string("../../../input.txt").expect("error reading file");
+    let input = parse(&raw_input);
+
+    // println!("Part 1: {}", part_1(&input));
+    // println!("Part 2: {}", part_2(&input));
 }
 
-fn part_1(input: &str) -> usize {
+fn parse(input: &str) -> Input {
+    dbg!(input.trim());
     todo!()
 }
 
-fn part_2(input: &str) -> usize {
+fn part_1(input: &Input) -> usize {
+    dbg!(input);
+    todo!()
+}
+
+fn part_2(input: &Input) -> usize {
     todo!()
 }
 """
@@ -166,7 +174,7 @@ else:
     pickle.dump(cookies, open(f"{sys.path[0]}/cookies", "wb"))
 
 # Get the days input file
-dayInput = requests.get(f"https://adventofcode.com/{args.year}/day/{int(args.day):02d}/input", cookies=cookies)
+dayInput = requests.get(f"https://adventofcode.com/{args.year}/day/{int(args.day)}/input", cookies=cookies)
 open(f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/input.txt", "wb").write(dayInput.content)
 
 dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}"
