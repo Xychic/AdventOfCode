@@ -19,21 +19,21 @@ fn parse(input: &str) -> Input {
     path.push_back((0, 0));
 
     for c in input.trim().chars() {
-        if vec!['^', '$'].contains(&c) {
+        if ['^', '$'].contains(&c) {
             continue;
         }
         let (x, y) = path.pop_back().unwrap();
         let mut w = None;
         match c {
-            'N' => (w = Some((x, y + 1))),
-            'E' => (w = Some((x + 1, y))),
-            'S' => (w = Some((x, y - 1))),
-            'W' => (w = Some((x - 1, y))),
+            'N' => w = Some((x, y + 1)),
+            'E' => w = Some((x + 1, y)),
+            'S' => w = Some((x, y - 1)),
+            'W' => w = Some((x - 1, y)),
             '(' => {
                 path.push_back((x, y));
                 path.push_back((x, y));
             }
-            '|' => (path.push_back(*path.back().unwrap())),
+            '|' => path.push_back(*path.back().unwrap()),
             _ => (),
         }
         if let Some(w) = w {
@@ -58,7 +58,6 @@ fn part_2(input: &Input) -> usize {
         .filter(|(_, &d)| d >= 1000)
         .count()
 }
-
 
 fn get_dists(map: &Input, start: (isize, isize)) -> HashMap<(isize, isize), usize> {
     let mut queue = VecDeque::new();
