@@ -1,0 +1,6 @@
+[package]
+edition = "2021"
+name = "experimental_emergency_teleportation"
+version = "0.1.0"
+[dependencies]
+regex = "*"
