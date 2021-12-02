@@ -134,7 +134,7 @@ main = do
     hClose handle
 """
 
-TEMPLATE_DICT["Rust"] = """use std::fs;
+TEMPLATE_DICT["Rust"] = """use std::{fs, time::Instant};
 
 type Input<'a> = Vec<&'a str>;
 
@@ -142,8 +142,18 @@ fn main() {
     let raw_input = fs::read_to_string("../../../input.txt").expect("error reading file");
     let input = parse(&raw_input);
 
-    // println!("Part 1: {}", part_1(&input));
-    // println!("Part 2: {}", part_2(&input));
+    let start = Instant::now();
+    // println!(
+    //     "Part 1: {}, took {:?}",
+    //     part_1(&input),
+    //     Instant::now() - start
+    // );
+    let start = Instant::now();
+    // println!(
+    //     "Part 2: {}, took {:?}",
+    //     part_2(&input),
+    //     Instant::now() - start
+    // );
 }
 
 fn parse(input: &str) -> Input {
