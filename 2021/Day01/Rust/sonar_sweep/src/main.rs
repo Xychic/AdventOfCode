@@ -29,17 +29,15 @@ fn parse(input: &str) -> Input {
 }
 
 fn part_1(input: &Input) -> usize {
-    input
-        .iter()
-        .zip(input.iter().skip(1))
-        .filter(|(a, b)| a < b)
+    (0..input.len() - 1)
+        .into_iter()
+        .filter(|&i| input[i] < input[i + 1])
         .count()
 }
 
 fn part_2(input: &Input) -> usize {
-    input
-        .iter()
-        .zip(input.iter().skip(3))
-        .filter(|(a, b)| a < b)
+    (0..input.len() - 3)
+        .into_iter()
+        .filter(|&i| input[i] < input[i + 3])
         .count()
 }
