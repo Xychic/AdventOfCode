@@ -143,17 +143,17 @@ fn main() {
     let input = parse(&raw_input);
 
     let start = Instant::now();
-    // println!(
-    //     "Part 1: {}, took {:?}",
-    //     part_1(&input),
-    //     Instant::now() - start
-    // );
+    println!(
+        "Part 1: {}, took {:?}",
+        part_1(&input),
+        Instant::now() - start
+    );
     let start = Instant::now();
-    // println!(
-    //     "Part 2: {}, took {:?}",
-    //     part_2(&input),
-    //     Instant::now() - start
-    // );
+    println!(
+        "Part 2: {}, took {:?}",
+        part_2(&input),
+        Instant::now() - start
+    );
 }
 
 fn parse(input: &str) -> Input {
@@ -168,6 +168,25 @@ fn part_1(input: &Input) -> usize {
 
 fn part_2(input: &Input) -> usize {
     todo!()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part_1() {
+        let test_input = "";
+        let test_answer = 0;
+        assert_eq!(part_1(&parse(&test_input)), test_answer);
+    }
+
+    #[test]
+    fn test_part_2() {
+        let test_input = "";
+        let test_answer = 0;
+        assert_eq!(part_2(&parse(&test_input)), test_answer);
+    }
 }
 """
 
@@ -192,6 +211,7 @@ dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}"
 if not os.listdir(dirPath):
     if args.language == "Rust":
         call(f"cargo new {title.lower()}", cwd=dirPath, shell=True)
+        call(f"code {title.lower()}", cwd=dirPath, shell=True)
         open(f"{dirPath}/{title.lower()}/src/main.rs", "w").write(TEMPLATE_DICT["Rust"])
     else:
         for i in range(2):

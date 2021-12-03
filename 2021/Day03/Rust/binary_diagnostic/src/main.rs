@@ -83,7 +83,6 @@ fn part_2(input: &Input) -> usize {
             c.retain(|line| line[i] == if count[0] <= count[1] { 0 } else { 1 });
         }
     }
-
     bin_to_dec(&o[0]) * bin_to_dec(&c[0])
 }
 
@@ -95,4 +94,25 @@ fn bin_to_dec(bin_array: &[usize]) -> usize {
         pow *= 2;
     }
     ans
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part_1() {
+        let test_input =
+            "00100\n11110\n10110\n10111\n10101\n01111\n00111\n11100\n10000\n11001\n00010\n01010";
+        let test_answer = 198;
+        assert_eq!(part_1(&parse(&test_input)), test_answer);
+    }
+
+    #[test]
+    fn test_part_2() {
+        let test_input =
+            "00100\n11110\n10110\n10111\n10101\n01111\n00111\n11100\n10000\n11001\n00010\n01010";
+        let test_answer = 230;
+        assert_eq!(part_2(&parse(&test_input)), test_answer);
+    }
 }
