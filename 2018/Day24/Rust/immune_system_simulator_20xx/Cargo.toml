@@ -1,0 +1,7 @@
+[package]
+edition = "2021"
+name = "immune_system_simulator_20xx"
+version = "0.1.0"
+
+[dependencies]
+regex = "*"
