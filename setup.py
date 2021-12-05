@@ -181,12 +181,12 @@ mod tests {
         assert_eq!(part_1(&parse(&test_input)), test_answer);
     }
 
-    #[test]
-    fn test_part_2() {
-        let test_input = "";
-        let test_answer = 0;
-        assert_eq!(part_2(&parse(&test_input)), test_answer);
-    }
+    // #[test]
+    // fn test_part_2() {
+    //     let test_input = "";
+    //     let test_answer = 0;
+    //     assert_eq!(part_2(&parse(&test_input)), test_answer);
+    // }
 }
 """
 
