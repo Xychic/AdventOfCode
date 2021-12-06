@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs, time::Instant};
+use std::{fs, time::Instant};
 
 type Input = Vec<usize>;
 
@@ -37,25 +37,25 @@ fn part_2(input: &Input) -> usize {
 }
 
 fn count_fish(fish: &Input, days: usize) -> usize {
-    let mut today = HashMap::with_capacity(9);
+    let mut today = vec![0; 9];
     for f in fish {
-        *today.entry(*f).or_insert(0) += 1;
+        today[*f] += 1;
     }
 
     for _ in 0..days {
-        let mut next_day = HashMap::with_capacity(9);
-        for (timer, count) in today {
+        let mut next_day = vec![0; 9];
+        for (timer, count) in today.iter().enumerate() {
             if timer == 0 {
-                *next_day.entry(6).or_insert(0) += count;
-                *next_day.entry(8).or_insert(0) += count;
+                next_day[6] += count;
+                next_day[8] += count;
             } else {
-                *next_day.entry(timer - 1).or_insert(0) += count;
+                next_day[timer - 1] += count
             }
         }
         today = next_day;
     }
 
-    today.values().sum()
+    today.iter().sum()
 }
 
 #[cfg(test)]
