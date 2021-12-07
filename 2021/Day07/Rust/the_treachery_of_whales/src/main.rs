@@ -36,9 +36,8 @@ fn part_1(input: &Input) -> usize {
 }
 
 fn part_2(input: &Input) -> usize {
-    let min = input[0];
-    let max = input[input.len() - 1];
-    (min..=max)
+    let mean: usize = input.iter().sum::<usize>() / input.len();
+    (mean - 1..=mean + 1)
         .map(|p| {
             input
                 .iter()
