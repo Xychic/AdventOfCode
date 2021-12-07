@@ -21,25 +21,23 @@ fn main() {
 }
 
 fn parse(input: &str) -> Input {
-    input
+    let mut crabs: Vec<_> = input
         .trim()
         .split(',')
         .map(|x| x.parse().unwrap())
-        .collect()
+        .collect();
+    crabs.sort();
+    crabs
 }
 
 fn part_1(input: &Input) -> usize {
-    let min = *input.iter().min().unwrap();
-    let max = *input.iter().max().unwrap();
-    (min..=max)
-        .map(|p| input.iter().map(|&x| x.max(p) - x.min(p)).sum())
-        .min()
-        .unwrap()
+    let mid = input[input.len() / 2];
+    input.iter().map(|&x| x.max(mid) - x.min(mid)).sum()
 }
 
 fn part_2(input: &Input) -> usize {
-    let min = *input.iter().min().unwrap();
-    let max = *input.iter().max().unwrap();
+    let min = input[0];
+    let max = input[input.len() - 1];
     (min..=max)
         .map(|p| {
             input
