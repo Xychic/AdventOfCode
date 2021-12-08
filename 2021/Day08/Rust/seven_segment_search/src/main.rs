@@ -44,23 +44,17 @@ fn part_1(input: &Input) -> usize {
 }
 
 fn part_2(input: &Input) -> usize {
-    let valid: Vec<_> = (0..=9).map(|d| digit_to_string(d).to_string()).collect();
+    let valid: Vec<_> = (0..=9).map(|d| digit_to_val(d)).collect();
 
     let mut ans = 0;
     for (a, b) in input {
         for p in "abcdefg".chars().permutations(7) {
             let mut swaps = HashMap::with_capacity(7);
-            for (k, v) in p.iter().zip("abcdefg".chars()) {
+            for (k, v) in p.iter().zip(vec![1, 2, 4, 8, 16, 32, 64]) {
                 swaps.insert(k, v);
             }
             let valid = a.iter().all(|&s| {
-                valid.contains(
-                    &s.chars()
-                        .sorted()
-                        .map(|c| swaps.get(&c).unwrap())
-                        .sorted()
-                        .collect::<String>(),
-                )
+                valid.contains(&s.chars().map(|c| swaps.get(&c).unwrap()).sum::<usize>())
             });
 
             if valid {
@@ -70,13 +64,7 @@ fn part_2(input: &Input) -> usize {
                     .enumerate()
                     .map(|(i, &s)| {
                         usize::pow(10, i as u32)
-                            * string_to_digit(
-                                &s.chars()
-                                    .sorted()
-                                    .map(|c| swaps.get(&c).unwrap())
-                                    .sorted()
-                                    .collect::<String>(),
-                            )
+                            * val_to_digit(s.chars().map(|c| swaps.get(&c).unwrap()).sum::<usize>())
                     })
                     .sum::<usize>();
                 continue;
@@ -86,34 +74,47 @@ fn part_2(input: &Input) -> usize {
     ans
 }
 
-fn string_to_digit(input: &str) -> usize {
+fn val_to_digit(input: usize) -> usize {
     match input {
-        "abcefg" => 0,
-        "cf" => 1,
-        "acdeg" => 2,
-        "acdfg" => 3,
-        "bcdf" => 4,
-        "abdfg" => 5,
-        "abdefg" => 6,
-        "acf" => 7,
-        "abcdefg" => 8,
-        "abcdfg" => 9,
+        119 => 0,
+        36 => 1,
+        93 => 2,
+        109 => 3,
+        46 => 4,
+        107 => 5,
+        123 => 6,
+        37 => 7,
+        127 => 8,
+        111 => 9,
         _ => unreachable!(),
     }
 }
 
-fn digit_to_string(input: usize) -> &'static str {
+fn digit_to_val(input: usize) -> usize {
     match input {
-        0 => "abcefg",
-        1 => "cf",
-        2 => "acdeg",
-        3 => "acdfg",
-        4 => "bcdf",
-        5 => "abdfg",
-        6 => "abdefg",
-        7 => "acf",
-        8 => "abcdefg",
-        9 => "abcdfg",
+        0 => 119,
+        1 => 36,
+        2 => 93,
+        3 => 109,
+        4 => 46,
+        5 => 107,
+        6 => 123,
+        7 => 37,
+        8 => 127,
+        9 => 111,
+        _ => unreachable!(),
+    }
+}
+
+fn char_to_val(input: &char) -> usize {
+    match input {
+        'a' => 1,
+        'b' => 2,
+        'c' => 4,
+        'd' => 8,
+        'e' => 16,
+        'f' => 32,
+        'g' => 64,
         _ => unreachable!(),
     }
 }
