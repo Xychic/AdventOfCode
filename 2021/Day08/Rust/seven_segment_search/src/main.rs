@@ -1,7 +1,5 @@
 use std::{collections::HashMap, fs, time::Instant};
 
-use itertools::Itertools;
-
 type Input<'a> = Vec<(Vec<&'a str>, Vec<&'a str>)>;
 
 fn main() {
@@ -44,79 +42,79 @@ fn part_1(input: &Input) -> usize {
 }
 
 fn part_2(input: &Input) -> usize {
-    let valid: Vec<_> = (0..=9).map(|d| digit_to_val(d)).collect();
-
     let mut ans = 0;
     for (a, b) in input {
-        for p in "abcdefg".chars().permutations(7) {
-            let mut swaps = HashMap::with_capacity(7);
-            for (k, v) in p.iter().zip(vec![1, 2, 4, 8, 16, 32, 64]) {
-                swaps.insert(k, v);
+        let mut mapping = HashMap::with_capacity(7);
+        let sets: Vec<Vec<_>> = [a.to_owned(), b.to_owned()]
+            .concat()
+            .iter()
+            .map(|d| d.chars().collect())
+            .collect();
+        let mut one = None;
+        let mut four = None;
+        for set in &sets {
+            if set.len() == 2 {
+                mapping.insert(set, 1);
+                one = Some(set);
+            } else if set.len() == 4 {
+                mapping.insert(set, 4);
+                four = Some(set);
+            } else if set.len() == 3 {
+                mapping.insert(set, 7);
+            } else if set.len() == 7 {
+                mapping.insert(set, 8);
             }
-            let valid = a.iter().all(|&s| {
-                valid.contains(&s.chars().map(|c| swaps.get(&c).unwrap()).sum::<usize>())
-            });
+        }
 
-            if valid {
-                ans += b
-                    .iter()
-                    .rev()
-                    .enumerate()
-                    .map(|(i, &s)| {
-                        usize::pow(10, i as u32)
-                            * val_to_digit(s.chars().map(|c| swaps.get(&c).unwrap()).sum::<usize>())
-                    })
-                    .sum::<usize>();
-                continue;
+        // 5s = 2, 3, 5
+        // 6s = 0, 6, 9
+
+        // 2: 1-1 4-2
+        // 3: 1-2 4-3
+        // 5: 1-1 4-3
+
+        // 0: 1-2 4-3
+        // 6: 1-1 4-2
+        // 9: 1-2 4-4
+
+        for set in &sets {
+            let match_1 = count_same(set, one.unwrap());
+            let match_4 = count_same(set, four.unwrap());
+            if set.len() == 5 {
+                match (match_1, match_4) {
+                    (1, 2) => mapping.insert(set, 2),
+                    (2, 3) => mapping.insert(set, 3),
+                    (1, 3) => mapping.insert(set, 5),
+                    _ => {
+                        println!("5 {:?}", (match_1, match_4));
+                        None
+                    }
+                };
+            } else if set.len() == 6 {
+                match (match_1, match_4) {
+                    (2, 3) => mapping.insert(set, 0),
+                    (1, 3) => mapping.insert(set, 6),
+                    (2, 4) => mapping.insert(set, 9),
+                    _ => {
+                        println!("6 {:?}", (match_1, match_4));
+                        None
+                    }
+                };
             }
+        }
+
+        for (i, d) in b.iter().rev().enumerate() {
+            ans += usize::pow(10, i as u32) * mapping.get(&d.chars().collect::<Vec<_>>()).unwrap();
         }
     }
     ans
 }
 
-fn val_to_digit(input: usize) -> usize {
-    match input {
-        119 => 0,
-        36 => 1,
-        93 => 2,
-        109 => 3,
-        46 => 4,
-        107 => 5,
-        123 => 6,
-        37 => 7,
-        127 => 8,
-        111 => 9,
-        _ => unreachable!(),
-    }
-}
-
-fn digit_to_val(input: usize) -> usize {
-    match input {
-        0 => 119,
-        1 => 36,
-        2 => 93,
-        3 => 109,
-        4 => 46,
-        5 => 107,
-        6 => 123,
-        7 => 37,
-        8 => 127,
-        9 => 111,
-        _ => unreachable!(),
-    }
-}
-
-fn char_to_val(input: &char) -> usize {
-    match input {
-        'a' => 1,
-        'b' => 2,
-        'c' => 4,
-        'd' => 8,
-        'e' => 16,
-        'f' => 32,
-        'g' => 64,
-        _ => unreachable!(),
-    }
+fn count_same<T>(a: &[T], b: &[T]) -> usize
+where
+    T: std::cmp::PartialEq,
+{
+    a.iter().filter(|x| b.contains(x)).count()
 }
 
 #[cfg(test)]
@@ -143,16 +141,16 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
     #[test]
     fn test_part_2() {
         let test_input = "
-be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
-edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
-fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg
-fbegcd cbd adcefb dageb afcb bc aefdc ecdab fgdeca fcdbega | efabcd cedba gadfec cb
-aecbfdg fbg gf bafeg dbefa fcge gcbea fcaegb dgceab fcbdga | gecf egdcabf bgf bfgea
-fgeab ca afcebg bdacfeg cfaedg gcfdb baec bfadeg bafgc acf | gebdcfa ecba ca fadegcb
-dbcfg fgd bdegcaf fgec aegbdf ecdfab fbedc dacgb gdcebf gf | cefg dcbef fcge gbcadfe
-bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ed bcgafe cdgba cbgef
-egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
-gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce";
+    be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
+    edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
+    fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg
+    fbegcd cbd adcefb dageb afcb bc aefdc ecdab fgdeca fcdbega | efabcd cedba gadfec cb
+    aecbfdg fbg gf bafeg dbefa fcge gcbea fcaegb dgceab fcbdga | gecf egdcabf bgf bfgea
+    fgeab ca afcebg bdacfeg cfaedg gcfdb baec bfadeg bafgc acf | gebdcfa ecba ca fadegcb
+    dbcfg fgd bdegcaf fgec aegbdf ecdfab fbedc dacgb gdcebf gf | cefg dcbef fcge gbcadfe
+    bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ed bcgafe cdgba cbgef
+    egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
+    gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce";
         let test_answer = 61229;
         assert_eq!(part_2(&parse(&test_input)), test_answer);
     }
