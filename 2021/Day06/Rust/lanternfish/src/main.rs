@@ -1,4 +1,4 @@
-use std::{fs, time::Instant};
+use std::{collections::VecDeque, fs, time::Instant};
 
 type Input = Vec<usize>;
 
@@ -37,25 +37,18 @@ fn part_2(input: &Input) -> usize {
 }
 
 fn count_fish(fish: &Input, days: usize) -> usize {
-    let mut today = vec![0; 9];
+    let mut queue = VecDeque::from(vec![0; 9]);
     for f in fish {
-        today[*f] += 1;
+        queue[*f] += 1;
     }
 
     for _ in 0..days {
-        let mut next_day = vec![0; 9];
-        for (timer, count) in today.iter().enumerate() {
-            if timer == 0 {
-                next_day[6] += count;
-                next_day[8] += count;
-            } else {
-                next_day[timer - 1] += count
-            }
-        }
-        today = next_day;
+        let c = queue.pop_front().unwrap();
+        queue[6] += c;
+        queue.push_back(c);
     }
 
-    today.iter().sum()
+    queue.iter().sum()
 }
 
 #[cfg(test)]
