@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, fs, time::Instant};
+use std::{collections::HashMap, fs, time::Instant};
 
 type Input = Vec<Vec<u32>>;
 
@@ -53,49 +53,31 @@ fn part_1(input: &Input) -> u32 {
 }
 
 fn part_2(input: &Input) -> usize {
-    let mut lows = Vec::new();
+    let mut basins = HashMap::new();
     let x_size = input[0].len();
     let y_size = input.len();
+
     for (y, row) in input.iter().enumerate() {
-        for (x, val) in row.iter().enumerate() {
-            if [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
-                .iter()
-                .map(|&(x2, y2)| {
-                    if x2 < x_size && y2 < y_size {
-                        input[y2][x2]
-                    } else {
-                        u32::MAX
-                    }
-                })
-                .all(|x| val < &x)
-            {
-                lows.push((x, y));
+        for (x, &val) in row.iter().enumerate() {
+            if val != 9 {
+                let basin = get_basin((x, y), (x_size, y_size), input);
+                *basins.entry(basin).or_insert(0 as usize) += 1;
             }
         }
     }
 
-    let mut basins = Vec::with_capacity(lows.len());
-    let mut seen = Vec::with_capacity(input.len() * input[0].len());
-    for l in lows {
-        let mut basin = 0;
-        let mut queue = VecDeque::new();
-        queue.push_back(l);
-        seen.push(l);
-        while let Some((x, y)) = queue.pop_front() {
-            basin += 1;
-            for (x2, y2) in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)] {
-                if x2 < x_size && y2 < y_size {
-                    if !seen.contains(&(x2, y2)) && input[y2][x2] != 9 {
-                        queue.push_back((x2, y2));
-                        seen.push((x2, y2));
-                    }
-                }
-            }
+    let mut vals: Vec<_> = basins.values().into_iter().collect();
+    vals.sort_unstable();
+    vals.iter().rev().take(3).map(|&x| x).product()
+}
+
+fn get_basin((x, y): (usize, usize), (max_x, max_y): (usize, usize), data: &Input) -> usize {
+    for (x2, y2) in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)] {
+        if x2 < max_x && y2 < max_y && data[y2][x2] < data[y][x] {
+            return get_basin((x2, y2), (max_x, max_y), data);
         }
-        basins.push(basin);
     }
-    basins.sort_unstable();
-    basins.iter().rev().take(3).product()
+    x * max_y + y
 }
 
 #[cfg(test)]
