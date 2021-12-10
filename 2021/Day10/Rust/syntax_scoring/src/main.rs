@@ -30,35 +30,26 @@ fn part_1(input: &Input) -> usize {
         let mut stack = VecDeque::with_capacity(line.len());
         for c in line.chars() {
             match c {
-                ')' => {
-                    if stack.back().unwrap() != &'(' {
-                        score += 3;
+                ')' | ']' | '}' | '>' => {
+                    if stack.pop_back().unwrap() != c {
+                        score += match c {
+                            ')' => 3,
+                            ']' => 57,
+                            '}' => 1197,
+                            '>' => 25137,
+                            _ => unreachable!(),
+                        };
                         break;
                     }
-                    stack.pop_back();
                 }
-                ']' => {
-                    if stack.back().unwrap() != &'[' {
-                        score += 57;
-                        break;
-                    }
-                    stack.pop_back();
-                }
-                '}' => {
-                    if stack.back().unwrap() != &'{' {
-                        score += 1197;
-                        break;
-                    }
-                    stack.pop_back();
-                }
-                '>' => {
-                    if stack.back().unwrap() != &'<' {
-                        score += 25137;
-                        break;
-                    }
-                    stack.pop_back();
-                }
-                _ => stack.push_back(c),
+                '(' | '[' | '{' | '<' => stack.push_back(match c {
+                    '(' => ')',
+                    '{' => '}',
+                    '[' => ']',
+                    '<' => '>',
+                    _ => unreachable!(),
+                }),
+                _ => unreachable!(),
             }
         }
     }
@@ -67,73 +58,47 @@ fn part_1(input: &Input) -> usize {
 
 fn part_2(input: &Input) -> usize {
     let mut scores = Vec::with_capacity(input.len());
-    for &line in input {
+    'lines: for &line in input {
         let mut stack = VecDeque::with_capacity(line.len());
-        let mut valid = true;
         for c in line.chars() {
             match c {
-                ')' => {
-                    if stack.back().unwrap() != &'(' {
-                        valid = false;
-                        break;
+                ')' | ']' | '}' | '>' => {
+                    if stack.pop_back().unwrap() != c {
+                        continue 'lines;
                     }
-                    stack.pop_back();
                 }
-                ']' => {
-                    if stack.back().unwrap() != &'[' {
-                        valid = false;
-                        break;
-                    }
-                    stack.pop_back();
-                }
-                '}' => {
-                    if stack.back().unwrap() != &'{' {
-                        valid = false;
-                        break;
-                    }
-                    stack.pop_back();
-                }
-                '>' => {
-                    if stack.back().unwrap() != &'<' {
-                        valid = false;
-                        break;
-                    }
-                    stack.pop_back();
-                }
-                _ => stack.push_back(c),
+                '(' | '[' | '{' | '<' => stack.push_back(match c {
+                    '(' => ')',
+                    '{' => '}',
+                    '[' => ']',
+                    '<' => '>',
+                    _ => unreachable!(),
+                }),
+                _ => unreachable!(),
             }
         }
-        if valid {
-            scores.push(
-                stack
-                    .iter()
-                    .rev()
-                    .map(|c| get_closer_score(&c))
-                    .fold(0, |acc, x| acc * 5 + x),
-            );
-        }
+        scores.push(
+            stack
+                .iter()
+                .rev()
+                .map(|c| match c {
+                    ')' => 1,
+                    ']' => 2,
+                    '}' => 3,
+                    '>' => 4,
+                    _ => unreachable!(),
+                })
+                .fold(0, |acc, x| 5 * acc + x),
+        );
     }
-    scores.sort();
+    scores.sort_unstable();
     scores[(scores.len() - 1) / 2]
-}
-
-fn get_closer_score(c: &char) -> usize {
-    match c {
-        '(' => 1,
-        '[' => 2,
-        '{' => 3,
-        '<' => 4,
-        _ => unreachable!(),
-    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_part_1() {
-        let test_input = "[({(<(())[]>[[{[]{<()<>>
+    const TEST_INPUT_1: &str = "[({(<(())[]>[[{[]{<()<>>
 [(()[<>])]({[<{<<[]>>(
 {([(<{}[<>[]}>{[]{[(<()>
 (((({<>}<{<{<>}{[]{[]{}
@@ -143,23 +108,15 @@ mod tests {
 [<(<(<(<{}))><([]([]()
 <{([([[(<>()){}]>(<<{{
 <{([{{}}[<[[[<>{}]]]>[]]";
-        let test_answer = 26397;
-        assert_eq!(part_1(&parse(&test_input)), test_answer);
+    const TEST_INPUT_2: &str = TEST_INPUT_1;
+
+    #[test]
+    fn test_part_1() {
+        assert_eq!(part_1(&parse(&TEST_INPUT_1)), 26397);
     }
 
     #[test]
     fn test_part_2() {
-        let test_input = "[({(<(())[]>[[{[]{<()<>>
-[(()[<>])]({[<{<<[]>>(
-{([(<{}[<>[]}>{[]{[(<()>
-(((({<>}<{<{<>}{[]{[]{}
-[[<[([]))<([[{}[[()]]]
-[{[{({}]{}}([{[{{{}}([]
-{<[[]]>}<{[{[{[]{()[[[]
-[<(<(<(<{}))><([]([]()
-<{([([[(<>()){}]>(<<{{
-<{([{{}}[<[[[<>{}]]]>[]]";
-        let test_answer = 288957;
-        assert_eq!(part_2(&parse(&test_input)), test_answer);
+        assert_eq!(part_2(&parse(&TEST_INPUT_2)), 288957);
     }
 }
