@@ -173,19 +173,17 @@ fn part_2(input: &Input) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+    const TEST_INPUT_1: &str = "";
+    const TEST_INPUT_2: &str = TEST_INPUT_1;
 
     #[test]
     fn test_part_1() {
-        let test_input = "";
-        let test_answer = 0;
-        assert_eq!(part_1(&parse(&test_input)), test_answer);
+        assert_eq!(part_1(&parse(&TEST_INPUT_1)), 0);
     }
 
     // #[test]
     // fn test_part_2() {
-    //     let test_input = "";
-    //     let test_answer = 0;
-    //     assert_eq!(part_2(&parse(&test_input)), test_answer);
+    //     assert_eq!(part_2(&parse(&TEST_INPUT_2)), 0);
     // }
 }
 """
