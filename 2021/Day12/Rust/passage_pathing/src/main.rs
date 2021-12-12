@@ -1,8 +1,4 @@
-use std::{
-    collections::{HashMap, VecDeque},
-    fs,
-    time::Instant,
-};
+use std::{collections::HashMap, fs, time::Instant};
 
 type Input<'a> = HashMap<&'a str, Vec<&'a str>>;
 
@@ -48,57 +44,54 @@ fn parse(input: &str) -> Input {
 }
 
 fn part_1(input: &Input) -> usize {
-    fn get_paths<'a>(connections: &'a HashMap<&str, Vec<&str>>, path: VecDeque<&'a str>) -> usize {
-        let last = *path.back().unwrap();
-        if last == "end" {
-            return 1;
-        }
-        let possible = connections.get(&last).unwrap();
-        let mut paths = 0;
-        for &p in possible {
-            if is_little(p) && path.contains(&p) {
-                continue;
-            }
-            let mut new_path = path.clone();
-            new_path.push_back(p);
-            paths += get_paths(connections, new_path);
-        }
-        paths
-    }
-    get_paths(input, VecDeque::from(vec!["start"]))
+    get_paths(input, "start", vec!["start"], &|path, cave| {
+        !is_little(cave) || !path.contains(&cave)
+    })
 }
 
 fn part_2(input: &Input) -> usize {
-    fn get_paths<'a>(connections: &'_ HashMap<&str, Vec<&str>>, path: VecDeque<&'a str>) -> usize {
-        let last = *path.back().unwrap();
-        if last == "end" {
-            return 1;
-        }
-        let possible = connections.get(&last).unwrap();
-        let mut paths = 0;
-        for &p in possible {
-            if p == "start" || (is_little(p) && path.contains(&p) && max_little_visit(&path) == 2) {
-                continue;
-            }
-            let mut new_path = path.clone();
-            new_path.push_back(p);
-            paths += get_paths(connections, new_path);
-        }
-        paths
+    get_paths(input, "start", vec!["start"], &|path, cave| {
+        cave != "start" && (!is_little(cave) || !path.contains(&cave) || !max_little_visit(&path))
+    })
+}
+
+fn get_paths(
+    connections: &HashMap<&str, Vec<&str>>,
+    current: &str,
+    seen: Vec<&str>,
+    valid: &dyn Fn(&Vec<&str>, &str) -> bool,
+) -> usize {
+    if current == "end" {
+        return 1;
     }
-    get_paths(input, VecDeque::from(vec!["start"]))
+
+    connections
+        .get(&current)
+        .unwrap()
+        .iter()
+        .map(|p| {
+            if valid(&seen, p) {
+                let mut new_path = Vec::with_capacity(seen.len() + 1);
+                for x in &seen {
+                    new_path.push(*x);
+                }
+                new_path.push(p);
+                get_paths(connections, p, new_path, valid)
+            } else {
+                0
+            }
+        })
+        .sum()
 }
 
 fn is_little(cave: &str) -> bool {
     cave.chars().all(|c| c.is_lowercase())
 }
 
-fn max_little_visit(path: &VecDeque<&str>) -> usize {
+fn max_little_visit(path: &Vec<&str>) -> bool {
     path.iter()
         .filter(|c| is_little(c))
-        .map(|c| path.iter().filter(|&a| a == c).count())
-        .max()
-        .unwrap()
+        .any(|c| path.iter().filter(|&a| a == c).count() >= 2)
 }
 
 #[cfg(test)]
