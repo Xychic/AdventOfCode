@@ -44,43 +44,40 @@ fn parse(input: &str) -> Input {
 }
 
 fn part_1(input: &Input) -> usize {
-    get_paths(input, "start", vec!["start"], &|path, cave| {
+    get_paths(input, "start", &Vec::new(), &|path, cave| {
         !is_little(cave) || !path.contains(&cave)
     })
 }
 
 fn part_2(input: &Input) -> usize {
-    get_paths(input, "start", vec!["start"], &|path, cave| {
-        cave != "start" && (!is_little(cave) || !path.contains(&cave) || !max_little_visit(&path))
+    get_paths(input, "start", &Vec::new(), &|path, cave| {
+        path.iter().filter(|&&cave| cave == "start").count() < 2
+            && (!is_little(cave) || !path.contains(&cave) || !max_little_visit(&path))
     })
 }
 
 fn get_paths(
     connections: &HashMap<&str, Vec<&str>>,
     current: &str,
-    seen: Vec<&str>,
+    seen: &Vec<&str>,
     valid: &dyn Fn(&Vec<&str>, &str) -> bool,
 ) -> usize {
     if current == "end" {
         return 1;
+    } else if !valid(&seen, current) {
+        return 0;
     }
+    let mut new_seen = Vec::with_capacity(seen.len() + 1);
+    for x in seen {
+        new_seen.push(*x);
+    }
+    new_seen.push(current);
 
     connections
         .get(&current)
         .unwrap()
         .iter()
-        .map(|p| {
-            if valid(&seen, p) {
-                let mut new_path = Vec::with_capacity(seen.len() + 1);
-                for x in &seen {
-                    new_path.push(*x);
-                }
-                new_path.push(p);
-                get_paths(connections, p, new_path, valid)
-            } else {
-                0
-            }
-        })
+        .map(|p| get_paths(connections, p, &new_seen, valid))
         .sum()
 }
 
