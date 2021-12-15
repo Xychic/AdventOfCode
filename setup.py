@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import argparse
 import sys
 import os
@@ -8,11 +10,17 @@ from subprocess import call
 from datetime import datetime
 from collections import defaultdict
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Getting the current date for defaults
 CURRENT_YEAR = datetime.now().year
 CURRENT_DAY = datetime.now().day
 CURRENT_PATH = sys.path[0]
+
+SESSION = os.environ.get("SESSION")
+
 
 # Create the argpaser
 parser = argparse.ArgumentParser()
@@ -192,13 +200,16 @@ mod tests {
 try:    os.makedirs(f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}")
 except FileExistsError: pass
 
-# If there is a cookies file load it, if not ask for the cookie
-if (os.path.isfile(f"{sys.path[0]}/cookies")):
-    cookies = pickle.load(open(f"{sys.path[0]}/cookies", "rb"))
-else:
-    session = input("Please enter session token: ")
-    cookies = {"session" : session}
-    pickle.dump(cookies, open(f"{sys.path[0]}/cookies", "wb"))
+# # If there is a cookies file load it, if not ask for the cookie
+# if (os.path.isfile(f"{sys.path[0]}/cookies")):
+#     cookies = pickle.load(open(f"{sys.path[0]}/cookies", "rb"))
+# else:
+#     session = input("Please enter session token: ")
+#     cookies = {"session" : session}
+#     pickle.dump(cookies, open(f"{sys.path[0]}/cookies", "wb"))
+cookies = {
+    "session": SESSION
+}
 
 # Get the days input file
 dayInput = requests.get(f"https://adventofcode.com/{args.year}/day/{int(args.day)}/input", cookies=cookies)
