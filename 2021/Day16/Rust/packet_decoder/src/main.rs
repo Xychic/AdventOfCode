@@ -22,12 +22,12 @@ impl Packet {
                     break;
                 }
             }
-            return Packet {
+            Packet {
                 version,
                 type_id,
                 data: Some(usize::from_str_radix(&data, 2).unwrap()),
                 sub_packets: None,
-            };
+            }
         } else {
             let length_type_id = input.pop_front().unwrap().to_digit(10).unwrap();
             let l;
@@ -38,27 +38,27 @@ impl Packet {
                 while input.len() > target_len {
                     sub.push(Packet::new(input));
                 }
-                return Packet {
+                Packet {
                     version,
                     type_id,
                     data: None,
                     sub_packets: Some(sub),
-                };
+                }
             } else {
                 l = usize::from_str_radix(&get_n(input, 11), 2).unwrap();
-                return Packet {
+                Packet {
                     version,
                     type_id,
                     data: None,
                     sub_packets: Some((0..l).map(|_| Packet::new(input)).collect()),
-                };
+                }
             }
         }
     }
 
-    fn sum_version(self) -> usize {
+    fn sum_version(&self) -> usize {
         let mut ans = self.version;
-        if let Some(sub) = self.sub_packets {
+        if let Some(sub) = self.sub_packets.as_ref() {
             for p in sub {
                 ans += p.sum_version();
             }
@@ -101,7 +101,7 @@ impl Packet {
             4 => self.data.unwrap(),
             5 => {
                 let packets = self.sub_packets.as_ref().unwrap();
-                if &packets[0].eval() > &packets[1].eval() {
+                if packets[0].eval() > packets[1].eval() {
                     1
                 } else {
                     0
@@ -109,7 +109,7 @@ impl Packet {
             }
             6 => {
                 let packets = self.sub_packets.as_ref().unwrap();
-                if &packets[0].eval() < &packets[1].eval() {
+                if packets[0].eval() < packets[1].eval() {
                     1
                 } else {
                     0
@@ -117,7 +117,7 @@ impl Packet {
             }
             7 => {
                 let packets = self.sub_packets.as_ref().unwrap();
-                if &packets[0].eval() == &packets[1].eval() {
+                if packets[0].eval() == packets[1].eval() {
                     1
                 } else {
                     0
@@ -128,21 +128,22 @@ impl Packet {
     }
 }
 
-type Input = VecDeque<char>;
+type Input = Packet;
 
 fn main() {
     let raw_input = fs::read_to_string("../../../input.txt").expect("error reading file");
+    let input = parse(&raw_input);
 
     let start = Instant::now();
     println!(
         "Part 1: {}, took {:?}",
-        part_1(&raw_input),
+        part_1(&input),
         Instant::now() - start
     );
     let start = Instant::now();
     println!(
         "Part 2: {}, took {:?}",
-        part_2(&raw_input),
+        part_2(&input),
         Instant::now() - start
     );
 }
@@ -153,15 +154,15 @@ fn parse(input: &str) -> Input {
         .chars()
         .map(|c| format!("{:0>4b}", c.to_digit(16).unwrap()))
         .collect();
-    bin.chars().collect()
+    Packet::new(&mut bin.chars().collect())
 }
 
-fn part_1(input: &str) -> usize {
-    Packet::new(&mut parse(input)).sum_version()
+fn part_1(input: &Packet) -> usize {
+    input.sum_version()
 }
 
-fn part_2(input: &str) -> usize {
-    Packet::new(&mut parse(input)).eval()
+fn part_2(input: &Packet) -> usize {
+    input.eval()
 }
 
 fn get_n(queue: &mut VecDeque<char>, n: usize) -> String {
@@ -176,11 +177,11 @@ mod tests {
 
     #[test]
     fn test_part_1() {
-        assert_eq!(part_1(&TEST_INPUT_1), 16);
+        assert_eq!(part_1(&parse(TEST_INPUT_1)), 16);
     }
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(&TEST_INPUT_2), 1);
+        assert_eq!(part_2(&parse(&TEST_INPUT_2)), 1);
     }
 }
