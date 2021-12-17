@@ -1,0 +1,7 @@
+[package]
+edition = "2021"
+name = "trick_shot"
+version = "0.1.0"
+[dependencies]
+regex = "*"
+
