@@ -1,4 +1,4 @@
-use std::{fs, time::Instant};
+use std::{cmp::Ordering, fs, time::Instant};
 
 use regex::Regex;
 
@@ -16,12 +16,10 @@ impl Probe {
     fn step(&mut self) {
         self.pos.0 += self.vel.0;
         self.pos.1 += self.vel.1;
-        self.vel.0 += if self.vel.0 > 0 {
-            -1
-        } else if self.vel.0 < 0 {
-            1
-        } else {
-            0
+        self.vel.0 += match self.vel.0.cmp(&0) {
+            Ordering::Less => 1,
+            Ordering::Equal => 0,
+            Ordering::Greater => -1,
         };
         self.vel.1 -= 1
     }
@@ -62,33 +60,33 @@ fn parse(input: &str) -> Input {
 }
 
 fn part_1(((x1, x2), (y1, y2)): &Input) -> isize {
-    let mut ans = 0;
-    for y in 0..10000 {
-        for x in 0..*x2 {
+    // If sqrt(x_max) < abs(y_min) we can ignore the x values
+    if (*x2 as f64).sqrt() < y1.abs() as f64 {
+        return (y1.abs() * (y1.abs() - 1)) / 2;
+    }
+    // If not, we have to simulate
+    for y in (*y1 + 1)..0 {
+        for x in 1..=*x2 {
             let mut p = Probe::new((0, 0), (x, y));
-            let mut max_y = 0;
             while &p.pos.0 <= x2 && y1 <= &p.pos.1 {
                 p.step();
-                max_y = max_y.max(p.pos.1);
                 if p.check_hit(&((*x1, *x2), (*y1, *y2))) {
-                    ans = ans.max(max_y);
-                    break;
+                    return (y.abs() * (y.abs() - 1)) / 2;
                 }
             }
         }
     }
-    ans
+    unreachable!()
 }
 
 fn part_2(((x1, x2), (y1, y2)): &Input) -> usize {
     let mut ans = 0;
-    for y in *y1..10000 {
-        for x in 0..(x2 + y1.abs()) {
+    for y in -y1.abs()..y1.abs() {
+        for x in 1..=*x2 {
             let mut p = Probe::new((0, 0), (x, y));
             while &p.pos.0 <= x2 && y1 <= &p.pos.1 {
                 p.step();
                 if p.check_hit(&((*x1, *x2), (*y1, *y2))) {
-                    // println!("{},{}", x, y);
                     ans += 1;
                     break;
                 }
