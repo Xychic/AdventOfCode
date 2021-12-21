@@ -1,0 +1,6 @@
+[package]
+edition = "2021"
+name = "dirac_dice"
+version = "0.1.0"
+[dependencies]
+itertools = "*"
