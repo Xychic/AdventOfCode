@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#! /usr/bin/env nix-shell
+#! nix-shell -i python3 -p python3 python3Packages.requests python3Packages.beautifulsoup4 python3Packages.python-dotenv
 
 import argparse
 import sys
@@ -39,7 +40,7 @@ title = "".join([c for c in title if c.isalpha() or c.isdigit() or c == "_"]).rs
 if args.NoLink:
     webbrowser.open_new(url)
 
-# Create the dictionary of langugae extensions (CBA to add any more atm)
+# Create the dictionary of language extensions (CBA to add any more atm)
 EXTENSION_DICT = defaultdict(str)
 EXTENSION_DICT["Python"] = ".py"
 EXTENSION_DICT["Java"] = ".java"
