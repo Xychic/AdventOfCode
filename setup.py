@@ -148,8 +148,10 @@ TEMPLATE_DICT["Rust"] = """use std::{fs, time::Instant};
 type Input<'a> = Vec<&'a str>;
 
 fn main() {
+    let start = Instant::now();
     let raw_input = fs::read_to_string("../../../input.txt").expect("error reading file");
     let input = parse(&raw_input);
+    println!("Parsed input in {:?}", Instant::now() - start);
 
     let start = Instant::now();
     println!(
@@ -183,7 +185,7 @@ fn part_2(input: &Input) -> usize {
 mod tests {
     use super::*;
     const TEST_INPUT_1: &str = "";
-    const TEST_INPUT_2: &str = TEST_INPUT_1;
+    // const TEST_INPUT_2: &str = TEST_INPUT_1;
 
     #[test]
     fn test_part_1() {
