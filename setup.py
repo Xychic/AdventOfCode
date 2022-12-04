@@ -143,61 +143,6 @@ main = do
     hClose handle
 """
 
-TEMPLATE_DICT["Rust"] = """use std::{fs, time::Instant};
-
-type Input<'a> = Vec<&'a str>;
-
-fn main() {
-    let start = Instant::now();
-    let raw_input = fs::read_to_string("../../../input.txt").expect("error reading file");
-    let input = parse(&raw_input);
-    println!("Parsed input in {:?}", Instant::now() - start);
-
-    let start = Instant::now();
-    println!(
-        "Part 1: {}, took {:?}",
-        part_1(&input),
-        Instant::now() - start
-    );
-    let start = Instant::now();
-    println!(
-        "Part 2: {}, took {:?}",
-        part_2(&input),
-        Instant::now() - start
-    );
-}
-
-fn parse(input: &str) -> Input {
-    dbg!(input.trim());
-    todo!()
-}
-
-fn part_1(input: &Input) -> usize {
-    dbg!(input);
-    todo!()
-}
-
-fn part_2(input: &Input) -> usize {
-    todo!()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    const TEST_INPUT_1: &str = "";
-    // const TEST_INPUT_2: &str = TEST_INPUT_1;
-
-    #[test]
-    fn test_part_1() {
-        assert_eq!(part_1(&parse(&TEST_INPUT_1)), 0);
-    }
-
-    // #[test]
-    // fn test_part_2() {
-    //     assert_eq!(part_2(&parse(&TEST_INPUT_2)), 0);
-    // }
-}
-"""
 
 # Create the full path for the day
 try:    os.makedirs(f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}")
@@ -222,9 +167,8 @@ dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}"
 # Write the file template
 if not os.listdir(dirPath):
     if args.language == "Rust":
-        call(f"cargo new {title.lower()}", cwd=dirPath, shell=True)
+        call(f"cargo generate --git https://github.com/Xychic/advent_of_code_template -s -f -n {title.lower()} -d year={args.year} -d day={int(args.day):02d}", cwd=dirPath, shell=True)
         call(f"code {title.lower()}", cwd=dirPath, shell=True)
-        open(f"{dirPath}/{title.lower()}/src/main.rs", "w").write(TEMPLATE_DICT["Rust"])
     else:
         for i in range(2):
             open(f"{dirPath}/{title.replace('_','')}-Part{i+1}{EXTENSION_DICT[args.language]}", "w").write(TEMPLATE_DICT[args.language])
