@@ -2,7 +2,7 @@ use std::{fs, time::Instant};
 
 use itertools::Itertools;
 
-type Input<'a> = Vec<Vec<usize>>;
+type Input<'a> = Vec<usize>;
 
 fn main() {
     let start = Instant::now();
@@ -28,21 +28,17 @@ fn parse(input: &str) -> Input {
     input
         .trim()
         .split("\n\n")
-        .map(|x| x.split('\n').map(|y| y.parse().unwrap()).collect())
+        .map(|x| x.lines().map(|y| y.parse::<usize>().unwrap()).sum())
+        .sorted_by(|a: &usize, b| b.cmp(a))
         .collect()
 }
 
 fn part_1(input: &Input) -> usize {
-    input.iter().map(|x| x.iter().sum()).max().unwrap()
+    *input.iter().next().unwrap()
 }
 
 fn part_2(input: &Input) -> usize {
-    input
-        .iter()
-        .map(|x| x.iter().sum::<usize>())
-        .sorted_by(|a, b| b.cmp(a))
-        .take(3)
-        .sum()
+    input.iter().take(3).sum()
 }
 
 #[cfg(test)]
