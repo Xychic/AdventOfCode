@@ -223,6 +223,8 @@ dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}"
 if not os.listdir(dirPath):
     if args.language == "Rust":
         call(f"cargo new {title.lower()}", cwd=dirPath, shell=True)
+        call("cargo add criterion", cwd=f"{dirPath}/{title.lower()}", shell=True)
+        call(f"echo '[[bench]]\nname = \"{title.lower()}\"\nharness = false' >> Cargo.toml", cwd=f"{dirPath/title.lower()}", shell=True)
         call(f"code {title.lower()}", cwd=dirPath, shell=True)
         open(f"{dirPath}/{title.lower()}/src/main.rs", "w").write(TEMPLATE_DICT["Rust"])
     else:
