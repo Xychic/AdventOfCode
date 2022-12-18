@@ -1,0 +1,16 @@
+[package]
+name = "boiling_boulders"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dev-dependencies]
+criterion = "0.4.0"
+
+[[bench]]
+name = "bench_boiling_boulders"
+harness = false
+
+[dependencies]
+itertools = "0.10.5"
