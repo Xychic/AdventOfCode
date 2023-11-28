@@ -25,17 +25,36 @@ SESSION = os.environ.get("SESSION")
 
 # Create the argpaser
 parser = argparse.ArgumentParser()
-parser.add_argument("-y", "--year", default=CURRENT_YEAR, help="The year of advent of code you want to setup for. (Default is current year)")
-parser.add_argument("-d", "--day", default=CURRENT_DAY, help="The day of advent of code you want to setup for. (Default is current day)")
-parser.add_argument("-l", "--language", default="Rust", help="The programming language to create the template file for. (Default is .py)")
-parser.add_argument("-N", "--NoLink", action="store_false", help="Prevents opening link to current day.")
+parser.add_argument(
+    "-y",
+    "--year",
+    default=CURRENT_YEAR,
+    help="The year of advent of code you want to setup for. (Default is current year)",
+)
+parser.add_argument(
+    "-d",
+    "--day",
+    default=CURRENT_DAY,
+    help="The day of advent of code you want to setup for. (Default is current day)",
+)
+parser.add_argument(
+    "-l",
+    "--language",
+    default="Rust",
+    help="The programming language to create the template file for. (Default is .py)",
+)
+parser.add_argument(
+    "-N", "--NoLink", action="store_false", help="Prevents opening link to current day."
+)
 args = parser.parse_args()
 
 # Get the title of the days challenge
 url = f"https://adventofcode.com/{args.year}/day/{args.day}"
 response = requests.get(url)
 soup = BeautifulSoup(response.text, "html.parser")
-title = str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "_")    # Horrible I know
+title = (
+    str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "_")
+)  # Horrible I know
 title = "".join([c for c in title if c.isalpha() or c.isdigit() or c == "_"]).rstrip()
 if args.NoLink:
     webbrowser.open_new(url)
@@ -50,7 +69,9 @@ EXTENSION_DICT["Haskell"] = ".hs"
 
 # I will probably update this if I decide I want to use any other language
 TEMPLATE_DICT = defaultdict(str)
-TEMPLATE_DICT["Python"] = """import sys
+TEMPLATE_DICT[
+    "Python"
+] = """import sys
 import time
 import collections
 import itertools
@@ -63,7 +84,9 @@ for line in open(f"{sys.path[0]}/../input.txt").read().splitlines():
 
 print(f"completed in {time.time() - startTime} seconds")
 """
-TEMPLATE_DICT["Java"] = f"""import java.io.BufferedReader;
+TEMPLATE_DICT[
+    "Java"
+] = f"""import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -85,7 +108,9 @@ class {title.replace('_','')} {{
     }}
 }}
 """
-TEMPLATE_DICT["C"] = f"""#include <stdio.h>
+TEMPLATE_DICT[
+    "C"
+] = f"""#include <stdio.h>
 #include <stdlib.h>
 
 int main(void) {{
@@ -110,7 +135,9 @@ int main(void) {{
     exit(EXIT_SUCCESS);
 }}
 """
-TEMPLATE_DICT["Haskell"] = """import System.IO
+TEMPLATE_DICT[
+    "Haskell"
+] = """import System.IO
 import Control.Monad
 
 printArray:: (Show a, Eq a) => [a] -> String
@@ -143,10 +170,36 @@ main = do
     hClose handle
 """
 
+TEMPLATE_DICT[
+    "Py1"
+] = """\
+print(
+    "\\n".join(
+        (
+            lambda input: [
+                "Part 1: {}".format(
+                    input
+                ),
+                "Part 2: {}".format(
+                    "TODO"
+                )
+            ]
+        )(
+            open("../input.txt").read().strip().splitlines()
+        )
+    )
+)
+"""
+
+dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}"
+if args.language == "Py1":
+    dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/Python"
 
 # Create the full path for the day
-try:    os.makedirs(f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}")
-except FileExistsError: pass
+try:
+    os.makedirs(dirPath)
+except FileExistsError:
+    pass
 
 # # If there is a cookies file load it, if not ask for the cookie
 # if (os.path.isfile(f"{sys.path[0]}/cookies")):
@@ -155,20 +208,34 @@ except FileExistsError: pass
 #     session = input("Please enter session token: ")
 #     cookies = {"session" : session}
 #     pickle.dump(cookies, open(f"{sys.path[0]}/cookies", "wb"))
-cookies = {
-    "session": SESSION
-}
+cookies = {"session": SESSION}
 
 # Get the days input file
-dayInput = requests.get(f"https://adventofcode.com/{args.year}/day/{int(args.day)}/input", cookies=cookies)
-open(f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/input.txt", "wb").write(dayInput.content)
+dayInput = requests.get(
+    f"https://adventofcode.com/{args.year}/day/{int(args.day)}/input", cookies=cookies
+)
+open(f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/input.txt", "wb").write(
+    dayInput.content
+)
 
-dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}"
+
 # Write the file template
 if not os.listdir(dirPath):
-    if args.language == "Rust":
-        call(f"cargo generate --git https://github.com/Xychic/advent_of_code_template -s -f -n {title.lower()} -d year={args.year} -d day={int(args.day):02d}", cwd=dirPath, shell=True)
-        call(f"code {title.lower()}", cwd=dirPath, shell=True)
-    else:
-        for i in range(2):
-            open(f"{dirPath}/{title.replace('_','')}-Part{i+1}{EXTENSION_DICT[args.language]}", "w").write(TEMPLATE_DICT[args.language])
+    match args.language:
+        case "Rust":
+            call(
+                f"cargo generate --git https://github.com/Xychic/advent_of_code_template -s -f -n {title.lower()} -d year={args.year} -d day={int(args.day):02d}",
+                cwd=dirPath,
+                shell=True,
+            )
+            call(f"code {title.lower()}", cwd=dirPath, shell=True)
+        case "Py1":
+            open(f"{dirPath}/{title.lower()}_oneline.py", "w").write(
+                TEMPLATE_DICT["Py1"]
+            )
+        case _:
+            for i in range(2):
+                open(
+                    f"{dirPath}/{title.replace('_','')}-Part{i+1}{EXTENSION_DICT[args.language]}",
+                    "w",
+                ).write(TEMPLATE_DICT[args.language])
