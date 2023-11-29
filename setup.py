@@ -228,6 +228,7 @@ if not os.listdir(dirPath):
                 cwd=dirPath,
                 shell=True,
             )
+            call(f"cargo test --release", cwd=f"{dirPath}/{title.lower()}", shell=True)
             call(f"code {title.lower()}", cwd=dirPath, shell=True)
         case "Py1":
             open(f"{dirPath}/{title.lower()}_oneline.py", "w").write(
