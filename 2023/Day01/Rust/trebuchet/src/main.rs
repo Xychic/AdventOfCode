@@ -8,9 +8,9 @@ fn main() {
     println!("Parsed input in {:?}", start.elapsed());
 
     start = Instant::now();
-    println!("Part 1: {}, took {:?}", part_1(&input), start.elapsed());
+    println!("Part 1: {}, took {:?}", part_1(input), start.elapsed());
     start = Instant::now();
-    println!("Part 2: {}, took {:?}", part_2(&input), start.elapsed());
+    println!("Part 2: {}, took {:?}", part_2(input), start.elapsed());
 }
 
 #[cfg(test)]
@@ -32,11 +32,11 @@ zoneight234
 
     #[test]
     fn test_part_1() {
-        assert_eq!(part_1(&parse(TEST_1_INPUT)), TEST_1_ANSWER);
+        assert_eq!(part_1(parse(TEST_1_INPUT)), TEST_1_ANSWER);
     }
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(&parse(TEST_2_INPUT)), TEST_2_ANSWER);
+        assert_eq!(part_2(parse(TEST_2_INPUT)), TEST_2_ANSWER);
     }
 }
