@@ -4,55 +4,45 @@ print(
             lambda input: [
                 "Part 1: {}".format(
                     sum(
-                        (lambda l: int(l[0] + l[-1]))(
-                            list(filter(lambda c: c.isdigit(), l))
+                        map(
+                            lambda l: (lambda x: int(x[0] + x[-1]))(
+                                list(filter(lambda c: c.isdigit(), l))
+                            ),
+                            input,
                         )
-                        for l in input
                     )
                 ),
                 "Part 2: {}".format(
                     sum(
                         map(
-                            lambda l: (lambda x: x[0][1] * 10 + x[-1][1])(
+                            lambda l: (lambda x: int(x[0] + x[-1]))(
                                 list(
                                     filter(
-                                        lambda x: x is not None,
-                                        map(
-                                            lambda i_char: next(
-                                                filter(
-                                                    lambda str_val: l[
-                                                        i_char[0] :
-                                                    ].startswith(str_val[0]),
-                                                    [
-                                                        ("1", 1),
-                                                        ("2", 2),
-                                                        ("3", 3),
-                                                        ("4", 4),
-                                                        ("5", 5),
-                                                        ("6", 6),
-                                                        ("7", 7),
-                                                        ("8", 8),
-                                                        ("9", 9),
-                                                        ("one", 1),
-                                                        ("two", 2),
-                                                        ("three", 3),
-                                                        ("four", 4),
-                                                        ("five", 5),
-                                                        ("six", 6),
-                                                        ("seven", 7),
-                                                        ("eight", 8),
-                                                        ("nine", 9),
-                                                    ],
-                                                ),
-                                                None,
-                                            ),
-                                            enumerate(l),
+                                        lambda c: c.isdigit(),
+                                        (lambda r: lambda f, i, s: r(r, f, i, s))(
+                                            lambda r, f, i, s: s
+                                            if i == []
+                                            else r(r, f, i[1:], f(s, i[0]))
+                                        )(
+                                            lambda x, y: x.replace(y[0], y[1]),
+                                            [
+                                                ("one", "o1e"),
+                                                ("two", "t2o"),
+                                                ("three", "t3e"),
+                                                ("four", "f4r"),
+                                                ("five", "f5e"),
+                                                ("six", "s6x"),
+                                                ("seven", "s7n"),
+                                                ("eight", "e8t"),
+                                                ("nine", "n9e"),
+                                            ],
+                                            l,
                                         ),
                                     )
                                 )
                             ),
                             input,
-                        )
+                        ),
                     )
                 ),
             ]
