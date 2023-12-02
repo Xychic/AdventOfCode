@@ -1,3 +1,4 @@
+# type: ignore
 print(
     "\n".join(
         (
@@ -19,12 +20,11 @@ print(
                                 list(
                                     filter(
                                         lambda c: c.isdigit(),
-                                        (lambda r: lambda f, i, s: r(r, f, i, s))(
-                                            lambda r, f, i, s: s
-                                            if i == []
-                                            else r(r, f, i[1:], f(s, i[0]))
+                                        (lambda r: lambda xs, acc: r(r, xs, acc))(
+                                            lambda r, xs, acc: acc
+                                            if not xs
+                                            else r(r, xs[1:], acc.replace(xs[0][0], xs[0][1]))
                                         )(
-                                            lambda x, y: x.replace(y[0], y[1]),
                                             [
                                                 ("one", "o1e"),
                                                 ("two", "t2o"),
