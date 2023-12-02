@@ -5,7 +5,6 @@ import argparse
 import sys
 import os
 import requests
-import pickle
 import webbrowser
 from subprocess import call
 from datetime import datetime
@@ -60,7 +59,7 @@ if args.NoLink:
     webbrowser.open_new(url)
 
 # Create the dictionary of language extensions (CBA to add any more atm)
-EXTENSION_DICT = defaultdict(str)
+EXTENSION_DICT: dict[str, str] = defaultdict(str)
 EXTENSION_DICT["Python"] = ".py"
 EXTENSION_DICT["Java"] = ".java"
 EXTENSION_DICT["C"] = ".c"
@@ -68,7 +67,7 @@ EXTENSION_DICT["C++"] = ".cpp"
 EXTENSION_DICT["Haskell"] = ".hs"
 
 # I will probably update this if I decide I want to use any other language
-TEMPLATE_DICT = defaultdict(str)
+TEMPLATE_DICT: dict[str, str] = defaultdict(str)
 TEMPLATE_DICT[
     "Python"
 ] = """import sys
@@ -173,6 +172,7 @@ main = do
 TEMPLATE_DICT[
     "Py1"
 ] = """\
+# type: ignore
 print(
     "\\n".join(
         (
