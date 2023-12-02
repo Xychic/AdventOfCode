@@ -191,6 +191,48 @@ print(
 )
 """
 
+TEMPLATE_DICT[
+    "Nix"
+] = """\
+let
+  pkgs = import <nixpkgs> {};
+in rec {
+  inherit (pkgs) lib;
+
+  parse = input: (lib.lists.init (lib.strings.splitString "\\n" input));
+  parsed = parse (builtins.readFile ../input.txt);
+  
+  part1' = input: input;
+  part1 = input: (
+    lib.fix (
+      self: {
+        test_result = part1' (parse TEST_1_INPUT);
+        result = if self.test_result == TEST_1_ANSWER then part1' input else {expected=TEST_1_ANSWER; received=self.test_result;};
+      }
+    )
+  ).result;
+
+  part2' = input: input;
+  part2 = input: (
+    lib.fix (
+      self: {
+        test_result = part2' (parse TEST_2_INPUT);
+        result = if self.test_result == TEST_2_ANSWER then part2' input else {expected=TEST_2_ANSWER; received=self.test_result;};
+      }
+    )
+  ).result;
+
+  TEST_1_INPUT = "";
+  TEST_1_ANSWER = 0;
+  TEST_2_INPUT = TEST_1_INPUT;
+  TEST_2_ANSWER = 0;
+
+
+  result = {part1 = part1 parsed; part2 = part2 parsed;};
+}
+"""
+
+
 dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}"
 if args.language == "Py1":
     dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/Python"
@@ -234,6 +276,8 @@ if not os.listdir(dirPath):
             open(f"{dirPath}/{title.lower()}_oneline.py", "w").write(
                 TEMPLATE_DICT["Py1"]
             )
+        case "Nix":
+            open(f"{dirPath}/{title.lower()}.nix", "w").write(TEMPLATE_DICT["Nix"])
         case _:
             for i in range(2):
                 open(
