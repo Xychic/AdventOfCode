@@ -1,27 +1,11 @@
 type Input<'a> = Vec<Game>;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Cube {
-    Red,
-    Green,
-    Blue,
-}
-
-impl Cube {
-    #[must_use]
-    pub fn max(&self) -> usize {
-        match self {
-            Cube::Red => 12,
-            Cube::Green => 13,
-            Cube::Blue => 14,
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Game {
     pub id: usize,
-    pub cubes: Vec<(Cube, usize)>,
+    pub max_red: usize,
+    pub max_green: usize,
+    pub max_blue: usize,
 }
 
 impl Game {
@@ -29,37 +13,23 @@ impl Game {
     #[must_use]
     pub fn new(s: &str) -> Game {
         let (game_id, cubes) = s.split_once(": ").unwrap();
+        let (max_red, max_green, max_blue) = cubes
+            .split([',', ';'])
+            .map(|c| match c.trim().split_once(' ').unwrap() {
+                (x, "red") => (x.parse().unwrap(), 0, 0),
+                (x, "green") => (0, x.parse().unwrap(), 0),
+                (x, "blue") => (0, 0, x.parse().unwrap()),
+                _ => unreachable!(),
+            })
+            .fold((0, 0, 0), |(r_m, g_m, b_m), (r, g, b)| {
+                (r_m.max(r), g_m.max(g), b_m.max(b))
+            });
         Game {
             id: game_id.split_once(' ').unwrap().1.parse().unwrap(),
-            cubes: cubes
-                .split([',', ';'])
-                .map(|c| {
-                    let (count, colour) = c.trim().split_once(' ').unwrap();
-                    (
-                        match colour {
-                            "red" => Cube::Red,
-                            "green" => Cube::Green,
-                            "blue" => Cube::Blue,
-                            _ => unreachable!("Invalid colour: {colour}"),
-                        },
-                        count.parse().unwrap(),
-                    )
-                })
-                .collect(),
+            max_red,
+            max_green,
+            max_blue,
         }
-    }
-
-    #[must_use]
-    pub fn power(&self) -> usize {
-        self.cubes
-            .iter()
-            .fold([1, 1, 1], |[r, g, b], (cube, count)| match cube {
-                Cube::Red => [r.max(*count), g, b],
-                Cube::Green => [r, g.max(*count), b],
-                Cube::Blue => [r, g, b.max(*count)],
-            })
-            .iter()
-            .product()
     }
 }
 
@@ -76,10 +46,16 @@ pub fn parse(input: &str) -> Input {
 /// # Panics
 #[must_use]
 pub fn part_1(input: &Input) -> usize {
+    const MAX_ALLOWED_RED: usize = 12;
+    const MAX_ALLOWED_GREEN: usize = 13;
+    const MAX_ALLOWED_BLUE: usize = 14;
     input
         .iter()
         .filter_map(|game| {
-            if game.cubes.iter().all(|(c, count)| *count <= c.max()) {
+            if game.max_red <= MAX_ALLOWED_RED
+                && game.max_green <= MAX_ALLOWED_GREEN
+                && game.max_blue <= MAX_ALLOWED_BLUE
+            {
                 Some(game.id)
             } else {
                 None
@@ -93,5 +69,8 @@ pub fn part_1(input: &Input) -> usize {
 /// # Panics
 #[must_use]
 pub fn part_2(input: &Input) -> usize {
-    input.iter().map(Game::power).sum()
+    input
+        .iter()
+        .map(|g| g.max_red * g.max_green * g.max_blue)
+        .sum()
 }
