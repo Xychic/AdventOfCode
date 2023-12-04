@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-type Input<'a> = Vec<(usize, usize)>;
+type Input<'a> = Vec<(u32, u32)>;
 
 /// Parser for 2023 Day 04 (`scratchcards`)
 ///
@@ -15,13 +15,14 @@ pub fn parse(input: &str) -> Input {
             let (winning, had) = nums.split_once(" | ").unwrap();
             let winning: Vec<_> = winning
                 .split_ascii_whitespace()
-                .map(|x| x.parse::<usize>().unwrap())
+                .map(|x| x.parse::<u32>().unwrap())
                 .collect();
+            #[allow(clippy::cast_possible_truncation)]
             let matches = had
                 .split_ascii_whitespace()
                 .map(|x| x.parse().unwrap())
                 .filter(|x| winning.contains(x))
-                .count();
+                .count() as u32;
             (
                 id.split_ascii_whitespace().nth(1).unwrap().parse().unwrap(),
                 matches,
@@ -37,7 +38,7 @@ pub fn parse(input: &str) -> Input {
 pub fn part_1(input: &Input) -> usize {
     input
         .iter()
-        .map(|&(_, x)| if x == 0 { 0 } else { 2_usize.pow(x as u32 - 1) })
+        .map(|&(_, x)| if x == 0 { 0 } else { 2_usize.pow(x - 1) })
         .sum()
 }
 
