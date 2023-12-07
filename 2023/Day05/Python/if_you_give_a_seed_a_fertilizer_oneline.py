@@ -97,7 +97,7 @@ print(
                             )
                         )(
                             almanac,
-                            [(a, a + b) for a, b in zip(seeds[::2], seeds[1::2])],
+                            list(map(lambda a, b: (a, a + b), seeds[::2], seeds[1::2])),
                         )
                     )[0]
                 ),

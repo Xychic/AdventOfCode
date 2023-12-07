@@ -43,7 +43,7 @@ print(
                                 + data[iter[0][0] + 1 :],
                             ),
                         )
-                    )(input, [0 for _ in range(1 + len(input))])
+                    )(input, list(map(lambda _: 0, range(1 + len(input)))))
                 ),
             ]
         )(
