@@ -1,0 +1,16 @@
+[package]
+name = "never_tell_me_the_odds"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dev-dependencies]
+criterion = "0.4.0"
+
+[[bench]]
+name = "bench_never_tell_me_the_odds"
+harness = false
+
+[dependencies]
+f128 = "0.2.9"
