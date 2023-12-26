@@ -1,0 +1,79 @@
+ke: km kz rk rl re
+bh: bp bn bt bu ca cy cw cd
+rw: re rx rz
+bj: bv cc cw
+rl: rw rq
+bg: bd bp bm cr cc ch
+re: rx
+ka: ky ku rk rb rh rl rf
+kw: kx kq ra ry rt
+bm: cr cd
+kk: kb ka kw kv ko rb ri ry rt
+bd: bv bp bn bq ca
+ca: ci
+rh: ry rf
+rs: re rx cb
+ry: rd
+rx: rp
+bt: ck cb cl
+kl: kx rc ra rl rd rz
+ro: br bc bl bs bm bf bz bo ck cb cw
+ko: rj re rn ru
+cr: ca cl cw
+bx: bt bu
+be: bm bq cr ch cw
+kr: ka ke km rc rg rs rq
+kx: rk rr rh
+kf: kz rw rd
+br: bc bl bd bv bu
+rv: rp rz ru
+bk: bw bd bx bp bf bt ck
+ri: rd rf
+rd: rv rn
+bs: bx cr ca
+ky: km rs rp be
+by: bn bz cg cw
+kz: kt rr rq rt
+kh: kg kw rg rj rv rs rt
+kp: rk rh rl rn
+ks: kt rb rx
+kn: ko ri rp rz ru
+ba: bj bx bf bo
+rk: rd ru
+kq: kt rc re rm rz
+rf: bn
+cy: cd
+kb: kg km ku rg rd rf
+ku: rr rb rn
+rm: rn
+bc: bw bs cc
+kt: rw rp rn ru
+bl: be bx cr
+ck: cc cy cl cd
+cl: cg
+bb: be bo cr ci
+kv: ks rc ri rg rm
+cb: cl
+ki: kw ks kf rr ra
+rz: ru
+rj: rs rn
+rg: rv
+kc: kl kd kv ks kp kt rv rf rq
+bu: cr cg
+ci: cl cg
+bi: bj bp bz cc ch
+bp: cg cw
+bo: ch cy
+bn: bz ca ch cg
+ch: cy
+bz: ci
+bw: bz bt bo cr cb ci
+rr: re
+kj: kp rr ra rv rz ru
+bq: cr cd
+km: ra rf
+kd: kt rr rc ri
+bv: bf bo cc
+kg: kw ra rs rm
+rn: rz
+bf: cy
