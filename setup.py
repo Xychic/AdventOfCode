@@ -96,14 +96,14 @@ class {title.replace('_','')} {{
         try {{
             reader = new BufferedReader(new FileReader("../input.txt"));
             String line = reader.readLine();
-			while (line != null) {{
-				System.out.println(line);
-				line = reader.readLine();
-			}}
-			reader.close();
+            while (line != null) {{
+                System.out.println(line);
+                line = reader.readLine();
+            }}
+            reader.close();
         }} catch (IOException e) {{
-			e.printStackTrace();
-		}}
+            e.printStackTrace();
+        }}
     }}
 }}
 """
@@ -232,6 +232,105 @@ in rec {
 }
 """
 
+TEMPLATE_DICT["Go"] = """\
+package main
+
+import (
+	"errors"
+	"fmt"
+	"log"
+	"os"
+	"strings"
+	"time"
+)
+
+type input = string
+
+func main() {
+    content, err := os.ReadFile("../../input.txt")
+    if err != nil {
+        log.Fatal(err)
+    }
+    start := time.Now()
+    inpt, err := Parse(strings.TrimSpace(string(content)))
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("Parsed input in %v\\n", time.Now().Sub(start))
+
+    start = time.Now()
+    part1, err := Part1(inpt)
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("Part 1: %v, took %v\\n", part1, time.Now().Sub(start))
+
+    start = time.Now()
+    part2, err := Part2(inpt)
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("Part 2: %v, took %v\\n", part2, time.Now().Sub(start))
+
+}
+
+func Parse(inpt string) (input, error) {
+    return inpt, nil
+}
+
+func Part1(inpt input) (int, error) {
+    fmt.Printf("%v\\n", inpt)
+    return -1, nil
+}
+
+func Part2(inpt input) (int, error) {
+    return 0, errors.New("Not yet implemented")
+    return 0, nil
+}
+
+"""
+
+TEMPLATE_DICT["Go_Test"] = """\
+package main
+
+import (
+    "log"
+    "testing"
+)
+
+var TEST_1_INPUT = ""
+var TEST_1_ANSWER = 0
+var TEST_2_INPUT = TEST_1_INPUT
+var TEST_2_ANSWER = 0
+
+func TestPart1(t *testing.T) {
+    parsed, err := Parse(TEST_1_INPUT)
+    if err != nil {
+        log.Fatal(err)
+    }
+    test_ans, err := Part1(parsed)
+    if err != nil {
+        t.Errorf("Error::Part1: \\"%v\\"", err)
+    } else if test_ans != TEST_1_ANSWER {
+        t.Errorf("Part1: Expected %v, received %v", TEST_1_ANSWER, test_ans)
+    }
+}
+
+// func TestPart2(t *testing.T) {
+//     parsed, err := Parse(TEST_2_INPUT)
+//     if err != nil {
+//         log.Fatal(err)
+//     }
+//     test_ans, err := Part2(parsed)
+//     if err != nil {
+//         t.Errorf("Error::Part1: \\"%v\\"", err)
+//     } else if test_ans != TEST_2_ANSWER {
+//         t.Errorf("Part1: Expected %v, received %v", TEST_2_ANSWER, test_ans)
+//     }
+// }
+
+"""
+
 
 dirPath = f"{CURRENT_PATH}/{args.year}/Day{int(args.day):02d}/{args.language}"
 if args.language == "Py1":
@@ -278,6 +377,16 @@ if not os.listdir(dirPath):
             )
         case "Nix":
             open(f"{dirPath}/{title.lower()}.nix", "w").write(TEMPLATE_DICT["Nix"])
+        case "Go":
+            os.makedirs(f"{dirPath}/{title.lower()}")
+            call(
+                f"go mod init {title.lower()}",
+                cwd=f"{dirPath}/{title.lower()}",
+                shell=True
+            )
+            open(f"{dirPath}/{title.lower()}/main.go", "w").write(TEMPLATE_DICT["Go"])
+            open(f"{dirPath}/{title.lower()}/{title.lower()}_test.go", "w").write(TEMPLATE_DICT["Go_Test"])
+            call(f"code {title.lower()}", cwd=dirPath, shell=True)
         case _:
             for i in range(2):
                 open(
