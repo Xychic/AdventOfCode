@@ -6,3 +6,4 @@ tempCodeRunnerFile*
 .vscode
 **/target
 .env
+gitcrypt.key
