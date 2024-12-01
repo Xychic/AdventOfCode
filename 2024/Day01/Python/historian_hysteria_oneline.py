@@ -23,17 +23,13 @@ print(
             ]
         )(
             *zip(
-                *list(
-                    map(
-                        lambda line:
-                            tuple(
-                                map(
-                                    int,
-                                    line.split("   ")
-                                )
-                            ),
-                        open("../input.txt").read().strip().splitlines()
-                    )
+                *map(
+                    lambda line:
+                        map(
+                            int,
+                            line.split("   ")
+                        ),
+                    open("../input.txt").read().strip().splitlines()
                 )
             )
         )
