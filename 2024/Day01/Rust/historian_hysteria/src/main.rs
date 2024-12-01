@@ -3,7 +3,7 @@ use std::{fs, time::Instant};
 
 fn main() {
     let mut start = Instant::now();
-    let raw_input = fs::read_to_string("../../input.txt").expect("error reading file");
+    let raw_input = fs::read_to_string("../../../input.txt").expect("error reading file");
     let input = parse(&raw_input);
     println!("Parsed input in {:?}", start.elapsed());
 
