@@ -1,5 +1,4 @@
-#! /usr/bin/env nix-shell
-#! nix-shell -i python3 -p python3 python3Packages.requests python3Packages.beautifulsoup4 python3Packages.python-dotenv
+#! .venv/bin/python
 
 import argparse
 import sys
@@ -52,7 +51,7 @@ url = f"https://adventofcode.com/{args.year}/day/{args.day}"
 response = requests.get(url)
 soup = BeautifulSoup(response.text, "html.parser")
 title = (
-    str(soup.findAll("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "_")
+    str(soup.find_all("h2")[0]).split(": ")[1].split(" ---")[0].replace(" ", "_")
 )  # Horrible I know
 title = "".join([c for c in title if c.isalpha() or c.isdigit() or c == "_"]).rstrip()
 if args.NoLink:
@@ -109,7 +108,7 @@ class {title.replace('_','')} {{
 """
 TEMPLATE_DICT[
     "C"
-] = f"""#include <stdio.h>
+] = """#include <stdio.h>
 #include <stdlib.h>
 
 int main(void) {{
@@ -342,13 +341,6 @@ try:
 except FileExistsError:
     pass
 
-# # If there is a cookies file load it, if not ask for the cookie
-# if (os.path.isfile(f"{sys.path[0]}/cookies")):
-#     cookies = pickle.load(open(f"{sys.path[0]}/cookies", "rb"))
-# else:
-#     session = input("Please enter session token: ")
-#     cookies = {"session" : session}
-#     pickle.dump(cookies, open(f"{sys.path[0]}/cookies", "wb"))
 cookies = {"session": SESSION}
 
 # Get the days input file
@@ -369,7 +361,7 @@ if not os.listdir(dirPath):
                 cwd=dirPath,
                 shell=True,
             )
-            call(f"cargo test --release", cwd=f"{dirPath}/{title.lower()}", shell=True)
+            call("cargo test --release", cwd=f"{dirPath}/{title.lower()}", shell=True)
             call(f"code {title.lower()}", cwd=dirPath, shell=True)
         case "Py1":
             open(f"{dirPath}/{title.lower()}_oneline.py", "w").write(
