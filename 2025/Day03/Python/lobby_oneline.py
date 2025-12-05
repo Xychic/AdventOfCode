@@ -10,25 +10,25 @@ print(
                         lambda x: sum(
                             map(
                                 lambda xs: (
-                                    lambda r1: lambda xs, size, seen: r1(r1, xs, size, seen)
+                                    lambda r: lambda xs, x, i, j, ans: r(r, xs, x, i, j, ans)
                                 )(
-                                    lambda r1, xs, size, seen: (
-                                        -2**16 if len(xs) < size else
-                                        0 if size == 0 else
-                                        seen.get((len(xs), size)) if (len(xs), size) in seen
-                                        else [
-                                            seen.update(
-                                                {
-                                                    (len(xs), size): max(
-                                                        r1(r1, xs[1:], size, seen),
-                                                        xs[0] * (10 ** (size-1)) + r1(r1, xs[1:], size-1, seen)
-                                                    )
-                                                }
+                                    lambda r, xs, x, i, j, ans: ans if i == x else r(
+                                        r,
+                                        xs,
+                                        x,
+                                        i + 1,
+                                        *max(
+                                            map(
+                                                lambda x: (
+                                                    x[0] + j + 1,
+                                                    ans * 10 + x[1]
+                                                ),
+                                                enumerate(xs[j:(len(xs)-x + 1 + i)]),
                                             ),
-                                            seen.get((len(xs), size))
-                                        ][1]
+                                            key=lambda x: x[1]
+                                        )
                                     )
-                                )(xs, x, {}),
+                                )(xs, x, 0, 0, 0),
                                 input,
                             )
                         ),
@@ -39,10 +39,10 @@ print(
         )(
             list(
                 map(
-                    lambda l: list(
+                    lambda line: list(
                         map(
                             int,
-                            l
+                            line
                         )
                     ),
                     open("../input.txt").read().strip().splitlines()
