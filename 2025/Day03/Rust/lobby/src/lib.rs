@@ -23,8 +23,7 @@ fn solve(xs: &[isize], count: usize) -> isize {
         let (index, val) = xs[current_index..(xs.len() - count + 1 + i)]
             .iter()
             .enumerate()
-            .rev()
-            .max_by_key(|&(_, b)| b)
+            .reduce(|acc, x| if x.1 > acc.1 { x } else { acc })
             .unwrap();
         current_index += index + 1;
         ans *= 10;
