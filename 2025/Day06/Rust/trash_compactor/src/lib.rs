@@ -1,4 +1,4 @@
-type Input<'a> = str;
+type Input<'a> = Vec<&'a str>;
 
 #[derive(Debug, Clone)]
 pub enum Op {
@@ -6,14 +6,20 @@ pub enum Op {
     Mul,
 }
 
+/// Parser for 2025 Day 06 (`trash_compactor`)
+///
+/// # Panics
+#[must_use]
+pub fn parse(input: &'_ str) -> Input<'_> {
+    input.lines().collect()
+}
+
 /// Solver for part 1 of 2025 Day 06 (`trash_compactor`)
 ///
 /// # Panics
 #[must_use]
 pub fn part_1(input: &Input) -> usize {
-    let lines: Vec<_> = input.trim().lines().collect();
-
-    let mut parsed: Vec<(Op, Vec<usize>)> = lines
+    let mut parsed: Vec<(Op, Vec<usize>)> = input
         .last()
         .unwrap()
         .split_whitespace()
@@ -23,7 +29,7 @@ pub fn part_1(input: &Input) -> usize {
             _ => unreachable!(),
         })
         .collect();
-    for &l in &lines[..lines.len() - 1] {
+    for &l in &input[..input.len() - 1] {
         for (i, s) in l.split_whitespace().enumerate() {
             let (_, arr) = parsed.get_mut(i).unwrap();
             arr.push(s.parse().unwrap());
@@ -43,9 +49,7 @@ pub fn part_1(input: &Input) -> usize {
 /// # Panics
 #[must_use]
 pub fn part_2(input: &Input) -> usize {
-    let lines: Vec<_> = input.lines().collect();
-
-    let mut parsed: Vec<(Op, Vec<usize>)> = lines
+    let mut parsed: Vec<(Op, Vec<usize>)> = input
         .last()
         .unwrap()
         .split_whitespace()
@@ -56,10 +60,10 @@ pub fn part_2(input: &Input) -> usize {
         })
         .collect();
 
-    let len = lines[0].len();
-    let mut iters: Vec<_> = lines
+    let len = input[0].len();
+    let mut iters: Vec<_> = input
         .iter()
-        .take(lines.len() - 1)
+        .take(input.len() - 1)
         .map(|l| l.chars())
         .collect();
 

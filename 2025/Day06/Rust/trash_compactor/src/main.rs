@@ -1,10 +1,11 @@
 use std::{fs, time::Instant};
-use trash_compactor::{part_1, part_2};
+use trash_compactor::{parse, part_1, part_2};
 
 fn main() {
     let mut start = Instant::now();
-    let input = fs::read_to_string("../../../input.txt").expect("error reading file");
-    println!("Read input in {:?}", start.elapsed());
+    let raw_input = fs::read_to_string("../../../input.txt").expect("error reading file");
+    let input = parse(&raw_input);
+    println!("Parsed input in {:?}", start.elapsed());
 
     start = Instant::now();
     println!("Part 1: {:?}, took {:?}", part_1(&input), start.elapsed());
@@ -26,11 +27,11 @@ mod tests {
 
     #[test]
     fn test_part_1() {
-        assert_eq!(part_1(TEST_1_INPUT), TEST_1_ANSWER);
+        assert_eq!(part_1(&parse(TEST_1_INPUT)), TEST_1_ANSWER);
     }
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(TEST_2_INPUT), TEST_2_ANSWER);
+        assert_eq!(part_2(&parse(TEST_2_INPUT)), TEST_2_ANSWER);
     }
 }
